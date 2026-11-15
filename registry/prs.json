@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "repository": "neophilism/Ask-Bill",
+  "repository": "Galinsky-2028/Ask-Bill",
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 112,
-  "observedAt": "2026-10-17T16:07:32Z",
+  "observedAt": "2026-11-15T18:26:53Z",
   "approval": {
     "basis": "Owner explicitly directed the complete Ask Bill architecture and PR plan (16 October 2026) and installation of foundational commit.",
     "source": "docs/DEVELOPMENT_PLAN.md"
@@ -2249,7 +2249,11 @@
       "title": "Pointing presentation reading and social gestures",
       "origin": "original",
       "prs": [],
-      "contributingPrs": [102],
+      "contributingPrs": [
+        102,
+        103,
+        104
+      ],
       "priorEvidencePrs": [],
       "dependsOn": [
         "AB-050",
@@ -4345,7 +4349,8 @@
       "origin": "original",
       "prs": [],
       "contributingPrs": [
-        101
+        101,
+        108
       ],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -4686,11 +4691,11 @@
   ],
   "pullRequests": [
     {
-      "id": 1,
+      "id": 4894342961,
       "number": 1,
       "title": "AB-001: Bind Ask Bill architecture and 112-unit canonical plan",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/1",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/1",
       "createdAt": "2026-10-16T21:13:35Z",
       "updatedAt": "2026-10-16T22:39:26Z",
       "mergedAt": "2026-10-16T22:39:25Z",
@@ -4698,11 +4703,11 @@
       "draft": false
     },
     {
-      "id": 2,
+      "id": 4894519802,
       "number": 2,
       "title": "AB-002: Pinned TypeScript workspace and CircleCI application checks",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/2",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/2",
       "createdAt": "2026-10-16T21:32:25Z",
       "updatedAt": "2026-10-16T22:40:55Z",
       "mergedAt": "2026-10-16T22:40:55Z",
@@ -4710,11 +4715,11 @@
       "draft": false
     },
     {
-      "id": 3,
+      "id": 4894688208,
       "number": 3,
       "title": "AB-003: Runtime validation for sources, citations, events and character manifests",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/3",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/3",
       "createdAt": "2026-10-16T21:50:28Z",
       "updatedAt": "2026-10-16T22:42:15Z",
       "mergedAt": "2026-10-16T22:42:15Z",
@@ -4722,11 +4727,11 @@
       "draft": false
     },
     {
-      "id": 4,
+      "id": 4894731752,
       "number": 4,
       "title": "AB-004: Accessible local reader preview and source-status safeguards (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/4",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/4",
       "createdAt": "2026-10-16T21:55:12Z",
       "updatedAt": "2026-10-16T22:50:33Z",
       "mergedAt": "2026-10-16T22:50:33Z",
@@ -4734,11 +4739,11 @@
       "draft": false
     },
     {
-      "id": 5,
+      "id": 4894758605,
       "number": 5,
       "title": "AB-005: Independent environment, private capability gating and offline fixtures",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/5",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/5",
       "createdAt": "2026-10-16T21:58:15Z",
       "updatedAt": "2026-10-16T22:48:39Z",
       "mergedAt": "2026-10-16T22:48:39Z",
@@ -4746,11 +4751,11 @@
       "draft": false
     },
     {
-      "id": 6,
+      "id": 4894788567,
       "number": 6,
       "title": "AB-006: Immutable asset manifest and integrity gates (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/6",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/6",
       "createdAt": "2026-10-16T22:01:39Z",
       "updatedAt": "2026-10-16T22:57:44Z",
       "mergedAt": "2026-10-16T22:57:44Z",
@@ -4758,11 +4763,11 @@
       "draft": false
     },
     {
-      "id": 7,
+      "id": 4894849794,
       "number": 7,
       "title": "AB-007: Tenant-isolated PostgreSQL foundation and scoped queries (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/7",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/7",
       "createdAt": "2026-10-16T22:08:42Z",
       "updatedAt": "2026-10-16T22:53:26Z",
       "mergedAt": "2026-10-16T22:53:26Z",
@@ -4770,11 +4775,11 @@
       "draft": false
     },
     {
-      "id": 8,
+      "id": 4895228077,
       "number": 8,
       "title": "AB-008: Publisher role authorization, session and MFA fixture safeguards (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/8",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/8",
       "createdAt": "2026-10-16T22:59:40Z",
       "updatedAt": "2026-10-16T23:02:21Z",
       "mergedAt": "2026-10-16T23:02:21Z",
@@ -4782,11 +4787,11 @@
       "draft": false
     },
     {
-      "id": 9,
+      "id": 4895256263,
       "number": 9,
       "title": "AB-009: Tenant-bound signed quarantine capabilities and storage controls (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/9",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/9",
       "createdAt": "2026-10-16T23:03:47Z",
       "updatedAt": "2026-10-16T23:06:48Z",
       "mergedAt": "2026-10-16T23:06:48Z",
@@ -4794,11 +4799,11 @@
       "draft": false
     },
     {
-      "id": 10,
+      "id": 4895578021,
       "number": 10,
       "title": "AB-010: Fenced PostgreSQL job queue, transactional outbox and worker adapters",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/10",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/10",
       "createdAt": "2026-10-16T23:49:43Z",
       "updatedAt": "2026-10-16T23:57:05Z",
       "mergedAt": "2026-10-16T23:57:05Z",
@@ -4806,11 +4811,11 @@
       "draft": false
     },
     {
-      "id": 11,
+      "id": 4895639156,
       "number": 11,
       "title": "AB-011: Explicit data-flow inventory, privacy retention and fail-closed safeguards",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/11",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/11",
       "createdAt": "2026-10-16T23:58:20Z",
       "updatedAt": "2026-10-17T00:00:21Z",
       "mergedAt": "2026-10-17T00:00:21Z",
@@ -4818,11 +4823,11 @@
       "draft": false
     },
     {
-      "id": 12,
+      "id": 4895672626,
       "number": 12,
       "title": "AB-012: Fail-closed preview readiness, health endpoints and graceful worker drain (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/12",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/12",
       "createdAt": "2026-10-17T00:03:02Z",
       "updatedAt": "2026-10-17T00:07:03Z",
       "mergedAt": "2026-10-17T00:07:03Z",
@@ -4830,11 +4835,11 @@
       "draft": false
     },
     {
-      "id": 13,
+      "id": 4895722011,
       "number": 13,
       "title": "AB-013: Hash-bound immutable original-source provenance and tenant isolation (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/13",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/13",
       "createdAt": "2026-10-17T00:09:48Z",
       "updatedAt": "2026-10-17T00:12:04Z",
       "mergedAt": "2026-10-17T00:12:04Z",
@@ -4842,11 +4847,11 @@
       "draft": false
     },
     {
-      "id": 14,
+      "id": 4896090531,
       "number": 14,
       "title": "AB-014: Bounded document-quarantine scanner and restricted sandbox runner",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/14",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/14",
       "createdAt": "2026-10-17T01:09:35Z",
       "updatedAt": "2026-10-17T01:11:41Z",
       "mergedAt": "2026-10-17T01:11:41Z",
@@ -4854,11 +4859,11 @@
       "draft": false
     },
     {
-      "id": 15,
+      "id": 4896099275,
       "number": 15,
       "title": "AB-015: Text, Markdown and DOCX source-preserving parser foundations",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/15",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/15",
       "createdAt": "2026-10-17T01:11:11Z",
       "updatedAt": "2026-10-17T01:14:54Z",
       "mergedAt": "2026-10-17T01:14:54Z",
@@ -4866,11 +4871,11 @@
       "draft": false
     },
     {
-      "id": 16,
+      "id": 4896119570,
       "number": 16,
       "title": "AB-017: Version-pinned legislative XML hierarchy and source-safety gates",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/16",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/16",
       "createdAt": "2026-10-17T01:14:30Z",
       "updatedAt": "2026-10-17T01:17:34Z",
       "mergedAt": "2026-10-17T01:17:34Z",
@@ -4878,11 +4883,11 @@
       "draft": false
     },
     {
-      "id": 17,
+      "id": 4896138230,
       "number": 17,
       "title": "AB-016: Isolated PDF review, real native extraction and OCR safeguards",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/17",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/17",
       "createdAt": "2026-10-17T01:17:14Z",
       "updatedAt": "2026-10-17T01:21:29Z",
       "mergedAt": "2026-10-17T01:21:29Z",
@@ -4890,11 +4895,11 @@
       "draft": false
     },
     {
-      "id": 18,
+      "id": 4896152420,
       "number": 18,
       "title": "AB-018: Exact Unicode citation anchors and version-bound text spans",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/18",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/18",
       "createdAt": "2026-10-17T01:19:35Z",
       "updatedAt": "2026-10-17T01:21:55Z",
       "mergedAt": "2026-10-17T01:21:55Z",
@@ -4902,11 +4907,11 @@
       "draft": false
     },
     {
-      "id": 19,
+      "id": 4896162193,
       "number": 19,
       "title": "AB-019: Version-scoped definitions, cross-references and exception graph",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/19",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/19",
       "createdAt": "2026-10-17T01:21:12Z",
       "updatedAt": "2026-10-17T01:22:23Z",
       "mergedAt": "2026-10-17T01:22:23Z",
@@ -4914,11 +4919,11 @@
       "draft": false
     },
     {
-      "id": 20,
+      "id": 4896181246,
       "number": 20,
       "title": "AB-020: Official Congress.gov bill/version metadata and safe retrieval adapter",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/20",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/20",
       "createdAt": "2026-10-17T01:24:13Z",
       "updatedAt": "2026-10-17T01:26:31Z",
       "mergedAt": "2026-10-17T01:26:31Z",
@@ -4926,11 +4931,11 @@
       "draft": false
     },
     {
-      "id": 21,
+      "id": 4896195883,
       "number": 21,
       "title": "AB-021: Immutable version lifecycle, stale-source warnings and safe version switching",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/21",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/21",
       "createdAt": "2026-10-17T01:26:58Z",
       "updatedAt": "2026-10-17T01:31:46Z",
       "mergedAt": "2026-10-17T01:31:45Z",
@@ -4938,11 +4943,11 @@
       "draft": false
     },
     {
-      "id": 22,
+      "id": 4896215202,
       "number": 22,
       "title": "AB-023: Immutable tenant/version lexical index generations and atomic activation",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/22",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/22",
       "createdAt": "2026-10-17T01:30:38Z",
       "updatedAt": "2026-10-17T01:36:28Z",
       "mergedAt": "2026-10-17T01:36:28Z",
@@ -4950,11 +4955,11 @@
       "draft": false
     },
     {
-      "id": 23,
+      "id": 4896223378,
       "number": 23,
       "title": "AB-022: Version-bound amendment previews with ambiguity and conflict rejection",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/23",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/23",
       "createdAt": "2026-10-17T01:32:07Z",
       "updatedAt": "2026-10-17T01:33:38Z",
       "mergedAt": "2026-10-17T01:33:37Z",
@@ -4962,11 +4967,11 @@
       "draft": false
     },
     {
-      "id": 24,
+      "id": 4896235905,
       "number": 24,
       "title": "AB-029: Server-authorized source-pinned question router and privacy controls",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/24",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/24",
       "createdAt": "2026-10-17T01:34:23Z",
       "updatedAt": "2026-10-17T01:36:53Z",
       "mergedAt": "2026-10-17T01:36:52Z",
@@ -4974,11 +4979,11 @@
       "draft": false
     },
     {
-      "id": 25,
+      "id": 4896253607,
       "number": 25,
       "title": "AB-030: Cancellable provider adapters and fail-closed live generation",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/25",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/25",
       "createdAt": "2026-10-17T01:37:43Z",
       "updatedAt": "2026-10-17T01:39:25Z",
       "mergedAt": "2026-10-17T01:39:25Z",
@@ -4986,11 +4991,11 @@
       "draft": false
     },
     {
-      "id": 26,
+      "id": 4896260603,
       "number": 26,
       "title": "AB-031: Source-hash-verified evidence retrieval and exception expansion",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/26",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/26",
       "createdAt": "2026-10-17T01:39:03Z",
       "updatedAt": "2026-10-17T01:41:02Z",
       "mergedAt": "2026-10-17T01:41:02Z",
@@ -4998,11 +5003,11 @@
       "draft": false
     },
     {
-      "id": 27,
+      "id": 4896273538,
       "number": 27,
       "title": "AB-032: Source-verified claim envelopes with semantic-review hold",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/27",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/27",
       "createdAt": "2026-10-17T01:41:32Z",
       "updatedAt": "2026-10-17T01:43:08Z",
       "mergedAt": "2026-10-17T01:43:08Z",
@@ -5010,11 +5015,11 @@
       "draft": false
     },
     {
-      "id": 28,
+      "id": 4896284621,
       "number": 28,
       "title": "AB-033: Verbatim entailment and decisive-exception preservation gate",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/28",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/28",
       "createdAt": "2026-10-17T01:43:33Z",
       "updatedAt": "2026-10-17T01:45:43Z",
       "mergedAt": "2026-10-17T01:45:43Z",
@@ -5022,11 +5027,11 @@
       "draft": false
     },
     {
-      "id": 29,
+      "id": 4896447806,
       "number": 29,
       "title": "AB-034: Tenant-locked generation usage and anonymous capability safeguards (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/29",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/29",
       "createdAt": "2026-10-17T02:12:55Z",
       "updatedAt": "2026-10-17T02:29:44Z",
       "mergedAt": "2026-10-17T02:29:44Z",
@@ -5034,11 +5039,11 @@
       "draft": false
     },
     {
-      "id": 30,
+      "id": 4896452438,
       "number": 30,
       "title": "AB-035: Validated event-only SSE and bounded replay (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/30",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/30",
       "createdAt": "2026-10-17T02:13:47Z",
       "updatedAt": "2026-10-17T02:32:13Z",
       "mergedAt": "2026-10-17T02:32:13Z",
@@ -5046,11 +5051,11 @@
       "draft": false
     },
     {
-      "id": 31,
+      "id": 4896457176,
       "number": 31,
       "title": "AB-036: Exact-source accessible citation cards and answer fallbacks (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/31",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/31",
       "createdAt": "2026-10-17T02:14:42Z",
       "updatedAt": "2026-10-17T02:34:58Z",
       "mergedAt": "2026-10-17T02:34:58Z",
@@ -5058,11 +5063,11 @@
       "draft": false
     },
     {
-      "id": 32,
+      "id": 4896512335,
       "number": 32,
       "title": "AB-045: Record owner-approved Option 10 Bill character direction",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/32",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/32",
       "createdAt": "2026-10-17T02:24:56Z",
       "updatedAt": "2026-10-17T02:26:35Z",
       "mergedAt": "2026-10-17T02:26:35Z",
@@ -5070,11 +5075,11 @@
       "draft": false
     },
     {
-      "id": 33,
+      "id": 4896536331,
       "number": 33,
       "title": "AB-037: Dated primary-law and draft source comparisons (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/33",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/33",
       "createdAt": "2026-10-17T02:29:06Z",
       "updatedAt": "2026-10-17T02:31:46Z",
       "mergedAt": "2026-10-17T02:31:45Z",
@@ -5082,11 +5087,11 @@
       "draft": false
     },
     {
-      "id": 34,
+      "id": 4896566187,
       "number": 34,
       "title": "AB-038: Untrusted legislative-source and model-tool injection boundaries (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/34",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/34",
       "createdAt": "2026-10-17T02:34:23Z",
       "updatedAt": "2026-10-17T02:36:37Z",
       "mergedAt": "2026-10-17T02:36:37Z",
@@ -5094,11 +5099,11 @@
       "draft": false
     },
     {
-      "id": 35,
+      "id": 4896566494,
       "number": 35,
       "title": "AB-047: Reproducible rigged Option 10 character GLB candidate (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/35",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/35",
       "createdAt": "2026-10-17T02:34:27Z",
       "updatedAt": "2026-10-17T02:37:11Z",
       "mergedAt": "2026-10-17T02:37:11Z",
@@ -5106,11 +5111,11 @@
       "draft": false
     },
     {
-      "id": 36,
+      "id": 4896575141,
       "number": 36,
       "title": "AB-039: Source-verified attributed perspectives and explicit unknowns (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/36",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/36",
       "createdAt": "2026-10-17T02:36:08Z",
       "updatedAt": "2026-10-17T02:40:49Z",
       "mergedAt": "2026-10-17T02:40:49Z",
@@ -5118,11 +5123,11 @@
       "draft": false
     },
     {
-      "id": 37,
+      "id": 4896589523,
       "number": 37,
       "title": "AB-072: Bounded attention, highlighted-text approach and idle wander prototype",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/37",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/37",
       "createdAt": "2026-10-17T02:38:57Z",
       "updatedAt": "2026-10-17T02:40:44Z",
       "mergedAt": "2026-10-17T02:40:44Z",
@@ -5130,11 +5135,11 @@
       "draft": false
     },
     {
-      "id": 38,
+      "id": 4896597730,
       "number": 38,
       "title": "AB-024: Immutable reviewed release packs and atomic PostgreSQL publication (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/38",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/38",
       "createdAt": "2026-10-17T02:40:26Z",
       "updatedAt": "2026-10-17T02:43:25Z",
       "mergedAt": "2026-10-17T02:43:24Z",
@@ -5142,11 +5147,11 @@
       "draft": false
     },
     {
-      "id": 39,
+      "id": 4896605517,
       "number": 39,
       "title": "AB-047: Clean Blender import, editable source and rig audit (candidate)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/39",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/39",
       "createdAt": "2026-10-17T02:41:50Z",
       "updatedAt": "2026-10-17T02:50:37Z",
       "mergedAt": "2026-10-17T02:50:37Z",
@@ -5154,11 +5159,11 @@
       "draft": false
     },
     {
-      "id": 40,
+      "id": 4896613298,
       "number": 40,
       "title": "AB-025: Exact incomplete electronic-filing reference pack and source-bound questions (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/40",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/40",
       "createdAt": "2026-10-17T02:43:00Z",
       "updatedAt": "2026-10-17T02:45:08Z",
       "mergedAt": "2026-10-17T02:45:07Z",
@@ -5166,11 +5171,11 @@
       "draft": false
     },
     {
-      "id": 41,
+      "id": 4896623275,
       "number": 41,
       "title": "AB-027: Immutable extraction-correction previews and versioned audit records (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/41",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/41",
       "createdAt": "2026-10-17T02:44:43Z",
       "updatedAt": "2026-10-17T02:46:54Z",
       "mergedAt": "2026-10-17T02:46:54Z",
@@ -5178,11 +5183,11 @@
       "draft": false
     },
     {
-      "id": 42,
+      "id": 4896631770,
       "number": 42,
       "title": "AB-026: Distinct long-document stress packs and verified official import targets (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/42",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/42",
       "createdAt": "2026-10-17T02:46:27Z",
       "updatedAt": "2026-10-17T02:49:08Z",
       "mergedAt": "2026-10-17T02:49:08Z",
@@ -5190,11 +5195,11 @@
       "draft": false
     },
     {
-      "id": 43,
+      "id": 4896644018,
       "number": 43,
       "title": "AB-040: 240 version-pinned synthetic evaluation cases and held-out scoring (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/43",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/43",
       "createdAt": "2026-10-17T02:48:37Z",
       "updatedAt": "2026-10-17T02:49:53Z",
       "mergedAt": "2026-10-17T02:49:53Z",
@@ -5202,11 +5207,11 @@
       "draft": false
     },
     {
-      "id": 44,
+      "id": 4896656883,
       "number": 44,
       "title": "AB-041: Three source-preserving reading levels and session-only preferences (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/44",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/44",
       "createdAt": "2026-10-17T02:50:56Z",
       "updatedAt": "2026-10-17T02:53:23Z",
       "mergedAt": "2026-10-17T02:53:22Z",
@@ -5214,11 +5219,11 @@
       "draft": false
     },
     {
-      "id": 45,
+      "id": 4896657495,
       "number": 45,
       "title": "AB-046: Deterministic Blender candidate front/side/back and mobile preview renders",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/45",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/45",
       "createdAt": "2026-10-17T02:51:04Z",
       "updatedAt": "2026-10-17T02:57:35Z",
       "mergedAt": "2026-10-17T02:57:35Z",
@@ -5226,11 +5231,11 @@
       "draft": false
     },
     {
-      "id": 46,
+      "id": 4896668092,
       "number": 46,
       "title": "AB-028: Quarantined document recovery and private fenced ingestion (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/46",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/46",
       "createdAt": "2026-10-17T02:52:55Z",
       "updatedAt": "2026-10-17T02:55:23Z",
       "mergedAt": "2026-10-17T02:55:23Z",
@@ -5238,11 +5243,11 @@
       "draft": false
     },
     {
-      "id": 47,
+      "id": 4896678159,
       "number": 47,
       "title": "AB-042: Public source-only answer cache and safe provider fallbacks (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/47",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/47",
       "createdAt": "2026-10-17T02:54:47Z",
       "updatedAt": "2026-10-17T03:11:10Z",
       "mergedAt": "2026-10-17T03:11:10Z",
@@ -5250,11 +5255,11 @@
       "draft": false
     },
     {
-      "id": 48,
+      "id": 4896687834,
       "number": 48,
       "title": "AB-043: Opt-in redacted feedback and immutable answer incident controls (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/48",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/48",
       "createdAt": "2026-10-17T02:56:37Z",
       "updatedAt": "2026-10-17T03:11:18Z",
       "mergedAt": "2026-10-17T03:11:18Z",
@@ -5262,11 +5267,11 @@
       "draft": false
     },
     {
-      "id": 49,
+      "id": 4896764406,
       "number": 49,
       "title": "AB-044: Candidate-bound grounding acceptance gate (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/49",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/49",
       "createdAt": "2026-10-17T03:10:15Z",
       "updatedAt": "2026-10-17T03:15:41Z",
       "mergedAt": "2026-10-17T03:15:41Z",
@@ -5274,11 +5279,11 @@
       "draft": false
     },
     {
-      "id": 50,
+      "id": 4896808799,
       "number": 50,
       "title": "AB-004: Complete-source read-only reader with safe version links (follow-up)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/50",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/50",
       "createdAt": "2026-10-17T03:18:11Z",
       "updatedAt": "2026-10-17T03:20:17Z",
       "mergedAt": "2026-10-17T03:20:17Z",
@@ -5286,11 +5291,11 @@
       "draft": false
     },
     {
-      "id": 51,
+      "id": 4896817345,
       "number": 51,
       "title": "AB-004: Source-only HTTP routes and plain-text export (follow-up)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/51",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/51",
       "createdAt": "2026-10-17T03:19:54Z",
       "updatedAt": "2026-10-17T03:23:54Z",
       "mergedAt": "2026-10-17T03:23:54Z",
@@ -5298,11 +5303,11 @@
       "draft": false
     },
     {
-      "id": 53,
+      "id": 4896837747,
       "number": 53,
       "title": "AB-024: Active-release PostgreSQL reader adapter (follow-up)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/53",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/53",
       "createdAt": "2026-10-17T03:23:34Z",
       "updatedAt": "2026-10-17T03:25:47Z",
       "mergedAt": "2026-10-17T03:25:47Z",
@@ -5310,11 +5315,11 @@
       "draft": false
     },
     {
-      "id": 54,
+      "id": 4896847365,
       "number": 54,
       "title": "AB-004: Real Chromium public-reader HTTP accessibility smoke (follow-up)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/54",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/54",
       "createdAt": "2026-10-17T03:25:28Z",
       "updatedAt": "2026-10-17T03:28:13Z",
       "mergedAt": "2026-10-17T03:28:13Z",
@@ -5322,11 +5327,11 @@
       "draft": false
     },
     {
-      "id": 55,
+      "id": 4896860871,
       "number": 55,
       "title": "AB-004: Public published-bill catalog and pagination (follow-up)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/55",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/55",
       "createdAt": "2026-10-17T03:27:57Z",
       "updatedAt": "2026-10-17T03:30:16Z",
       "mergedAt": "2026-10-17T03:30:16Z",
@@ -5334,11 +5339,11 @@
       "draft": false
     },
     {
-      "id": 56,
+      "id": 4896872493,
       "number": 56,
       "title": "AB-024: Tenant-scoped active-release catalog PostgreSQL lookup (follow-up)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/56",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/56",
       "createdAt": "2026-10-17T03:29:57Z",
       "updatedAt": "2026-10-17T03:31:55Z",
       "mergedAt": "2026-10-17T03:31:55Z",
@@ -5346,11 +5351,11 @@
       "draft": false
     },
     {
-      "id": 57,
+      "id": 4896883350,
       "number": 57,
       "title": "AB-004: End-to-end catalog-to-reader Chromium navigation (follow-up)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/57",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/57",
       "createdAt": "2026-10-17T03:31:34Z",
       "updatedAt": "2026-10-17T03:33:37Z",
       "mergedAt": "2026-10-17T03:33:37Z",
@@ -5358,11 +5363,11 @@
       "draft": false
     },
     {
-      "id": 58,
+      "id": 4896904792,
       "number": 58,
       "title": "AB-001: Reconcile 56 merged PRs with canonical development registry and handoff",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/58",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/58",
       "createdAt": "2026-10-17T03:34:45Z",
       "updatedAt": "2026-10-17T03:38:08Z",
       "mergedAt": "2026-10-17T03:38:08Z",
@@ -5370,11 +5375,11 @@
       "draft": false
     },
     {
-      "id": 59,
+      "id": 4896922399,
       "number": 59,
       "title": "AB-024: Real PostgreSQL public release, tenant RLS and withdrawal regression",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/59",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/59",
       "createdAt": "2026-10-17T03:37:51Z",
       "updatedAt": "2026-10-17T03:41:28Z",
       "mergedAt": "2026-10-17T03:41:27Z",
@@ -5382,11 +5387,11 @@
       "draft": false
     },
     {
-      "id": 60,
+      "id": 4896942168,
       "number": 60,
       "title": "AB-024: Preflight size limits for public PostgreSQL source documents",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/60",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/60",
       "createdAt": "2026-10-17T03:41:07Z",
       "updatedAt": "2026-10-17T03:43:25Z",
       "mergedAt": "2026-10-17T03:43:25Z",
@@ -5394,11 +5399,11 @@
       "draft": false
     },
     {
-      "id": 61,
+      "id": 4896953439,
       "number": 61,
       "title": "AB-004: Bound concurrent public reader lookups and slow HTTP clients",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/61",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/61",
       "createdAt": "2026-10-17T03:43:02Z",
       "updatedAt": "2026-10-17T12:00:55Z",
       "mergedAt": "2026-10-17T12:00:55Z",
@@ -5406,11 +5411,11 @@
       "draft": false
     },
     {
-      "id": 62,
+      "id": 4899882683,
       "number": 62,
       "title": "AB-004: Graceful public reader drain and capacity visibility",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/62",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/62",
       "createdAt": "2026-10-17T12:01:52Z",
       "updatedAt": "2026-10-17T12:04:31Z",
       "mergedAt": "2026-10-17T12:04:30Z",
@@ -5418,11 +5423,11 @@
       "draft": false
     },
     {
-      "id": 63,
+      "id": 4899931897,
       "number": 63,
       "title": "AB-065: Version-pinned DOM anchors, layout invalidation and Chromium regression",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/63",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/63",
       "createdAt": "2026-10-17T12:10:00Z",
       "updatedAt": "2026-10-17T12:11:32Z",
       "mergedAt": "2026-10-17T12:11:32Z",
@@ -5430,11 +5435,11 @@
       "draft": false
     },
     {
-      "id": 64,
+      "id": 4899950258,
       "number": 64,
       "title": "AB-065: Bind published reader provision nodes to verified version metadata",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/64",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/64",
       "createdAt": "2026-10-17T12:13:06Z",
       "updatedAt": "2026-10-17T12:14:52Z",
       "mergedAt": "2026-10-17T12:14:52Z",
@@ -5442,11 +5447,11 @@
       "draft": false
     },
     {
-      "id": 65,
+      "id": 4899971650,
       "number": 65,
       "title": "AB-079: Original Bill voice personas and fail-closed licensing direction (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/65",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/65",
       "createdAt": "2026-10-17T12:16:24Z",
       "updatedAt": "2026-10-17T12:18:25Z",
       "mergedAt": "2026-10-17T12:18:25Z",
@@ -5454,11 +5459,11 @@
       "draft": false
     },
     {
-      "id": 66,
+      "id": 4900000487,
       "number": 66,
       "title": "AB-080: Source-pinned speech preflight and fail-closed audio delivery (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/66",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/66",
       "createdAt": "2026-10-17T12:21:19Z",
       "updatedAt": "2026-10-17T12:26:03Z",
       "mergedAt": "2026-10-17T12:26:02Z",
@@ -5466,11 +5471,11 @@
       "draft": false
     },
     {
-      "id": 67,
+      "id": 4900016158,
       "number": 67,
       "title": "AB-081: Version-pinned pronunciation mapping and word/viseme timing (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/67",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/67",
       "createdAt": "2026-10-17T12:23:49Z",
       "updatedAt": "2026-10-17T12:26:43Z",
       "mergedAt": "2026-10-17T12:26:43Z",
@@ -5478,11 +5483,11 @@
       "draft": false
     },
     {
-      "id": 68,
+      "id": 4900053646,
       "number": 68,
       "title": "AB-091: Native no-JavaScript exact-source search and pinned citations (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/68",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/68",
       "createdAt": "2026-10-17T12:30:10Z",
       "updatedAt": "2026-10-17T12:32:09Z",
       "mergedAt": "2026-10-17T12:32:09Z",
@@ -5490,11 +5495,11 @@
       "draft": false
     },
     {
-      "id": 69,
+      "id": 4900063851,
       "number": 69,
       "title": "AB-092: Exact-version public source share and text export (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/69",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/69",
       "createdAt": "2026-10-17T12:31:45Z",
       "updatedAt": "2026-10-17T12:34:29Z",
       "mergedAt": "2026-10-17T12:34:28Z",
@@ -5502,11 +5507,11 @@
       "draft": false
     },
     {
-      "id": 70,
+      "id": 4900078793,
       "number": 70,
       "title": "AB-089: Version-pinned source-only guided reading tour (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/70",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/70",
       "createdAt": "2026-10-17T12:34:06Z",
       "updatedAt": "2026-10-17T12:35:16Z",
       "mergedAt": "2026-10-17T12:35:16Z",
@@ -5514,11 +5519,11 @@
       "draft": false
     },
     {
-      "id": 71,
+      "id": 4900086854,
       "number": 71,
       "title": "AB-046–062: Generate 20 distinct animated Bill GLBs and walking audition gallery",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/71",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/71",
       "createdAt": "2026-10-17T12:35:19Z",
       "updatedAt": "2026-10-17T12:50:35Z",
       "mergedAt": "2026-10-17T12:50:35Z",
@@ -5526,11 +5531,11 @@
       "draft": false
     },
     {
-      "id": 72,
+      "id": 4900095528,
       "number": 72,
       "title": "AB-093: Spanish source-reader navigation without fabricated translations (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/72",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/72",
       "createdAt": "2026-10-17T12:36:43Z",
       "updatedAt": "2026-10-17T12:41:18Z",
       "mergedAt": "2026-10-17T12:41:18Z",
@@ -5538,11 +5543,11 @@
       "draft": false
     },
     {
-      "id": 73,
+      "id": 4900137205,
       "number": 73,
       "title": "AB-097: Default-deny read-only published-source embedding with CSP controls (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/73",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/73",
       "createdAt": "2026-10-17T12:42:51Z",
       "updatedAt": "2026-10-17T12:45:03Z",
       "mergedAt": "2026-10-17T12:45:02Z",
@@ -5550,11 +5555,11 @@
       "draft": false
     },
     {
-      "id": 74,
+      "id": 4900149709,
       "number": 74,
       "title": "AB-091: Accessible source printing and Chromium print-mode verification (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/74",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/74",
       "createdAt": "2026-10-17T12:44:32Z",
       "updatedAt": "2026-10-17T12:49:59Z",
       "mergedAt": "2026-10-17T12:49:59Z",
@@ -5562,11 +5567,11 @@
       "draft": false
     },
     {
-      "id": 75,
+      "id": 4900164484,
       "number": 75,
       "title": "AB-090: Curated child-safe civic glossary without live data collection (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/75",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/75",
       "createdAt": "2026-10-17T12:46:27Z",
       "updatedAt": "2026-10-17T12:50:08Z",
       "mergedAt": "2026-10-17T12:50:08Z",
@@ -5574,11 +5579,11 @@
       "draft": false
     },
     {
-      "id": 76,
+      "id": 4900198456,
       "number": 76,
       "title": "AB-095: Bounded tenant-scoped expired session cleanup (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/76",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/76",
       "createdAt": "2026-10-17T12:51:41Z",
       "updatedAt": "2026-10-17T14:10:03Z",
       "mergedAt": "2026-10-17T14:10:03Z",
@@ -5586,11 +5591,11 @@
       "draft": false
     },
     {
-      "id": 77,
+      "id": 4900244322,
       "number": 77,
       "title": "AB-066: Version-fenced viewport and canvas coordinate conversion",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/77",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/77",
       "createdAt": "2026-10-17T12:58:27Z",
       "updatedAt": "2026-10-17T13:02:31Z",
       "mergedAt": "2026-10-17T13:02:31Z",
@@ -5598,11 +5603,11 @@
       "draft": false
     },
     {
-      "id": 78,
+      "id": 4900257330,
       "number": 78,
       "title": "AB-067: Protected ledge traversal graph and safe docking",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/78",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/78",
       "createdAt": "2026-10-17T13:00:35Z",
       "updatedAt": "2026-10-17T13:04:54Z",
       "mergedAt": "2026-10-17T13:04:54Z",
@@ -5610,11 +5615,11 @@
       "draft": false
     },
     {
-      "id": 79,
+      "id": 4900261656,
       "number": 79,
       "title": "Bill roster: compare 3 animated GLBs and shortlist seven candidates",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/79",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/79",
       "createdAt": "2026-10-17T13:01:18Z",
       "updatedAt": "2026-10-17T13:10:00Z",
       "mergedAt": "2026-10-17T13:10:00Z",
@@ -5622,11 +5627,11 @@
       "draft": false
     },
     {
-      "id": 80,
+      "id": 4900280989,
       "number": 80,
       "title": "AB-068: Bounded Worker path planner and stale-result fencing",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/80",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/80",
       "createdAt": "2026-10-17T13:04:10Z",
       "updatedAt": "2026-10-17T13:08:52Z",
       "mergedAt": "2026-10-17T13:08:52Z",
@@ -5634,11 +5639,11 @@
       "draft": false
     },
     {
-      "id": 81,
+      "id": 4900302033,
       "number": 81,
       "title": "Bill characters: build verified, locally runnable ZIP of all 20 GLBs",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/81",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/81",
       "createdAt": "2026-10-17T13:07:18Z",
       "updatedAt": "2026-10-17T13:20:27Z",
       "mergedAt": "2026-10-17T13:20:27Z",
@@ -5646,11 +5651,11 @@
       "draft": false
     },
     {
-      "id": 82,
+      "id": 4900307777,
       "number": 82,
       "title": "AB-001: Reconcile live Ask Bill PR registry and agent handoff",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/82",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/82",
       "createdAt": "2026-10-17T13:08:10Z",
       "updatedAt": "2026-10-17T13:11:55Z",
       "mergedAt": "2026-10-17T13:11:55Z",
@@ -5658,11 +5663,11 @@
       "draft": false
     },
     {
-      "id": 83,
+      "id": 4900328487,
       "number": 83,
       "title": "AB-098: Accessible privacy-safe public reader errors (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/83",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/83",
       "createdAt": "2026-10-17T13:11:25Z",
       "updatedAt": "2026-10-17T13:15:52Z",
       "mergedAt": "2026-10-17T13:15:52Z",
@@ -5670,11 +5675,11 @@
       "draft": false
     },
     {
-      "id": 84,
+      "id": 4900346681,
       "number": 84,
       "title": "AB-020: Strict Congress.gov version date and metadata guards",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/84",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/84",
       "createdAt": "2026-10-17T13:14:03Z",
       "updatedAt": "2026-10-17T13:19:04Z",
       "mergedAt": "2026-10-17T13:19:03Z",
@@ -5682,11 +5687,11 @@
       "draft": false
     },
     {
-      "id": 85,
+      "id": 4900394089,
       "number": 85,
       "title": "AB-068: Real Chromium source-geometry and Worker regression",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/85",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/85",
       "createdAt": "2026-10-17T13:20:35Z",
       "updatedAt": "2026-10-17T13:28:04Z",
       "mergedAt": "2026-10-17T13:28:04Z",
@@ -5694,11 +5699,11 @@
       "draft": false
     },
     {
-      "id": 86,
+      "id": 4900415719,
       "number": 86,
       "title": "AB-067: Verified transferable graph builder for browser Workers",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/86",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/86",
       "createdAt": "2026-10-17T13:24:00Z",
       "updatedAt": "2026-10-17T13:28:36Z",
       "mergedAt": "2026-10-17T13:28:36Z",
@@ -5706,11 +5711,11 @@
       "draft": false
     },
     {
-      "id": 87,
+      "id": 4900438697,
       "number": 87,
       "title": "AB-002: Deduplicate PR CI and cache pinned Playwright Chromium",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/87",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/87",
       "createdAt": "2026-10-17T13:27:34Z",
       "updatedAt": "2026-10-17T14:09:37Z",
       "mergedAt": "2026-10-17T14:09:36Z",
@@ -5718,11 +5723,11 @@
       "draft": false
     },
     {
-      "id": 88,
+      "id": 4900498288,
       "number": 88,
       "title": "Bill: 33 real GLB animation clips including eight distinct dances across all 20 characters",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/88",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/88",
       "createdAt": "2026-10-17T13:36:30Z",
       "updatedAt": "2026-10-17T13:53:49Z",
       "mergedAt": "2026-10-17T13:53:49Z",
@@ -5730,11 +5735,11 @@
       "draft": false
     },
     {
-      "id": 89,
+      "id": 4900563924,
       "number": 89,
       "title": "Bill: gentle idle dance scheduler, 33-clip audition UI and instant interruption",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/89",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/89",
       "createdAt": "2026-10-17T13:45:20Z",
       "updatedAt": "2026-10-17T14:17:39Z",
       "mergedAt": "2026-10-17T14:17:39Z",
@@ -5742,11 +5747,11 @@
       "draft": false
     },
     {
-      "id": 90,
+      "id": 4900780944,
       "number": 90,
       "title": "AB-082: Gesture-gated browser audio transport, speed, mute and interruption (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/90",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/90",
       "createdAt": "2026-10-17T14:13:45Z",
       "updatedAt": "2026-10-17T14:30:24Z",
       "mergedAt": "2026-10-17T14:30:24Z",
@@ -5754,11 +5759,11 @@
       "draft": false
     },
     {
-      "id": 91,
+      "id": 4900803664,
       "number": 91,
       "title": "AB-084: Selectable source-grounded captions and accessible transcript (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/91",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/91",
       "createdAt": "2026-10-17T14:16:33Z",
       "updatedAt": "2026-10-17T14:30:58Z",
       "mergedAt": "2026-10-17T14:30:58Z",
@@ -5766,11 +5771,11 @@
       "draft": false
     },
     {
-      "id": 92,
+      "id": 4900824823,
       "number": 92,
       "title": "AB-083: Audio-clock viseme coarticulation and source-fenced mouth scheduler (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/92",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/92",
       "createdAt": "2026-10-17T14:19:30Z",
       "updatedAt": "2026-10-17T14:31:34Z",
       "mergedAt": "2026-10-17T14:31:34Z",
@@ -5778,11 +5783,11 @@
       "draft": false
     },
     {
-      "id": 93,
+      "id": 4900848306,
       "number": 93,
       "title": "AB-071: Deterministic source-cue performance director and safe interruption (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/93",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/93",
       "createdAt": "2026-10-17T14:22:39Z",
       "updatedAt": "2026-10-17T14:37:05Z",
       "mergedAt": "2026-10-17T14:37:05Z",
@@ -5790,11 +5795,11 @@
       "draft": false
     },
     {
-      "id": 94,
+      "id": 4900867671,
       "number": 94,
       "title": "AB-075: Accessible pause, hide and reduced-motion controls (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/94",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/94",
       "createdAt": "2026-10-17T14:25:13Z",
       "updatedAt": "2026-10-17T14:37:47Z",
       "mergedAt": "2026-10-17T14:37:47Z",
@@ -5802,11 +5807,11 @@
       "draft": false
     },
     {
-      "id": 95,
+      "id": 4900881997,
       "number": 95,
       "title": "AB-073: Mobile keyboard-safe docking and registered whitespace stage (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/95",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/95",
       "createdAt": "2026-10-17T14:27:17Z",
       "updatedAt": "2026-10-17T14:38:20Z",
       "mergedAt": "2026-10-17T14:38:20Z",
@@ -5814,11 +5819,11 @@
       "draft": false
     },
     {
-      "id": 96,
+      "id": 4900897815,
       "number": 96,
       "title": "AB-074: Adaptive frame-budget and graphics lifecycle governor (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/96",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/96",
       "createdAt": "2026-10-17T14:29:27Z",
       "updatedAt": "2026-10-17T14:40:36Z",
       "mergedAt": "2026-10-17T14:40:35Z",
@@ -5826,11 +5831,11 @@
       "draft": false
     },
     {
-      "id": 97,
+      "id": 4900935596,
       "number": 97,
       "title": "AB-085: Explicit-gesture microphone and editable transcript preflight (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/97",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/97",
       "createdAt": "2026-10-17T14:34:39Z",
       "updatedAt": "2026-10-17T14:38:58Z",
       "mergedAt": "2026-10-17T14:38:58Z",
@@ -5838,11 +5843,11 @@
       "draft": false
     },
     {
-      "id": 98,
+      "id": 4900949908,
       "number": 98,
       "title": "AB-065: Repair real browser scroll-invalidation regression",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/98",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/98",
       "createdAt": "2026-10-17T14:36:37Z",
       "updatedAt": "2026-10-17T14:40:52Z",
       "mergedAt": null,
@@ -5850,11 +5855,11 @@
       "draft": true
     },
     {
-      "id": 99,
+      "id": 4900950361,
       "number": 99,
       "title": "AB-086: Version-fenced cancellation across AI, audio, captions and motion (partial)",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/99",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/99",
       "createdAt": "2026-10-17T14:36:40Z",
       "updatedAt": "2026-10-17T14:41:38Z",
       "mergedAt": "2026-10-17T14:41:38Z",
@@ -5862,11 +5867,11 @@
       "draft": false
     },
     {
-      "id": 100,
+      "id": 4901400102,
       "number": 100,
       "title": "AB-030: Complete AI, speech, publisher identity and private storage adapters",
       "state": "closed",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/100",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/100",
       "createdAt": "2026-10-17T15:32:38Z",
       "updatedAt": "2026-10-17T15:36:02Z",
       "mergedAt": "2026-10-17T15:36:02Z",
@@ -5874,13 +5879,97 @@
       "draft": false
     },
     {
-      "id": 101,
+      "id": 4901691576,
       "number": 101,
       "title": "AB-004: Complete reader, publisher workflow and provider runtime",
-      "state": "open",
-      "url": "https://github.com/neophilism/Ask-Bill/pull/101",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/101",
       "createdAt": "2026-10-17T16:07:19Z",
-      "updatedAt": "2026-10-17T16:07:19Z",
+      "updatedAt": "2026-10-17T16:10:55Z",
+      "mergedAt": "2026-10-17T16:10:55Z",
+      "closedAt": "2026-10-17T16:10:55Z",
+      "draft": false
+    },
+    {
+      "id": 4904061289,
+      "number": 102,
+      "title": "AB-055: Meshy API animation batch importer for owner-supplied Bill (partial)",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/102",
+      "createdAt": "2026-10-17T21:26:12Z",
+      "updatedAt": "2026-10-17T21:29:33Z",
+      "mergedAt": "2026-10-17T21:29:33Z",
+      "closedAt": "2026-10-17T21:29:33Z",
+      "draft": false
+    },
+    {
+      "id": 4904156473,
+      "number": 103,
+      "title": "AB-055: one-time no-charge Meshy secret and rig readiness preflight",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/103",
+      "createdAt": "2026-10-17T21:40:05Z",
+      "updatedAt": "2026-10-17T21:43:20Z",
+      "mergedAt": "2026-10-17T21:43:19Z",
+      "closedAt": "2026-10-17T21:43:19Z",
+      "draft": false
+    },
+    {
+      "id": 4904188730,
+      "number": 104,
+      "title": "AB-055: remove one-time Meshy credential preflight after success",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/104",
+      "createdAt": "2026-10-17T21:45:04Z",
+      "updatedAt": "2026-10-17T21:46:45Z",
+      "mergedAt": "2026-10-17T21:46:45Z",
+      "closedAt": "2026-10-17T21:46:45Z",
+      "draft": false
+    },
+    {
+      "id": 4913054496,
+      "number": 105,
+      "title": "AB-048: Production topology and deformation mesh",
+      "state": "open",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/105",
+      "createdAt": "2026-10-18T21:41:50Z",
+      "updatedAt": "2026-11-01T18:23:40Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "draft": true
+    },
+    {
+      "id": 4913066714,
+      "number": 106,
+      "title": "AB-094: Publisher catalog curation and maintenance UI",
+      "state": "open",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/106",
+      "createdAt": "2026-10-18T21:43:28Z",
+      "updatedAt": "2026-11-01T18:35:27Z",
+      "mergedAt": null,
+      "closedAt": null,
+      "draft": false
+    },
+    {
+      "id": 4941672396,
+      "number": 107,
+      "title": "Integrate Development Deployment Monitor (inventory-only)",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/107",
+      "createdAt": "2026-10-20T19:59:30Z",
+      "updatedAt": "2026-10-20T23:02:49Z",
+      "mergedAt": "2026-10-20T23:02:49Z",
+      "closedAt": "2026-10-20T23:02:49Z",
+      "draft": false
+    },
+    {
+      "id": 5325755303,
+      "number": 108,
+      "title": "AB-105: Free-plan hosted start with deferred publisher identity",
+      "state": "open",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/108",
+      "createdAt": "2026-11-15T18:24:48Z",
+      "updatedAt": "2026-11-15T18:24:48Z",
       "mergedAt": null,
       "closedAt": null,
       "draft": false
