@@ -3,6 +3,7 @@ import {readFile} from 'node:fs/promises';
 import {createPublishedSourceServer} from '../source-only/server.mjs';
 import {createConversationService} from './conversation.mjs';
 import {createApplicationApi} from './api.mjs';
+import {createTelemetry,authorizedMetricsRequest} from '../../../packages/telemetry/index.mjs';
 
 const modules=new Map([
   ['/reader-client.mjs','../source-only/reader-client.mjs'],
@@ -20,7 +21,7 @@ function send(res,status,body,type='text/html; charset=utf-8',head=false,extra={
 function information(title,content){return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+escape(title)+' — Ask Bill</title><link rel="stylesheet" href="/public-reader.css"></head><body><header><a href="/bills">Ask Bill</a></header><main><h1>'+escape(title)+'</h1>'+content+'</main></body></html>';}
 export async function createAskBillApplication({publisherId,origin,stage='production',sessions,lookupPublishedPack,lookupPublishedCatalog,
   provider=null,reviewer=null,speech=null,transcription=null,publisherHandler=null,authorizeSpeechSegment=()=>{},
-  readiness=async()=>true,buildSha='development',maxInflight=25}={}){
+  readiness=async()=>true,buildSha='development',maxInflight=25,telemetry=createTelemetry(),metricsToken=null}={}){
   const conversation=createConversationService({publisherId,lookupPublishedPack,provider,reviewer});
   const api=createApplicationApi({publisherId,origin,stage,sessions,conversation,lookupPublishedPack,speech,transcription,authorizeSpeechSegment,maxInflight});
   const staticFiles=new Map();
@@ -34,8 +35,14 @@ export async function createAskBillApplication({publisherId,origin,stage='produc
       const head=req.method==='HEAD';
       if(staticFiles.has(req.url)){send(res,200,staticFiles.get(req.url),'text/javascript; charset=utf-8',head);return true;}
       if(req.url==='/'){res.writeHead(302,{...security,Location:'/bills'});res.end();return true;}
+      if(req.url==='/health/metrics'){
+        // Disabled (404) unless an operator token is configured; aggregate counters only.
+        if(!authorizedMetricsRequest(req,metricsToken))return false;
+        send(res,200,JSON.stringify(telemetry.snapshot()),'application/json',head);return true;
+      }
       if(req.url==='/health/live'||req.url==='/health/ready'){
         const ready=req.url==='/health/live'||await readiness();
+        if(!ready)telemetry.record('readiness_failed');
         send(res,ready?200:503,JSON.stringify({product:'ask-bill',status:ready?'ready':'unavailable',build:buildSha}), 'application/json',head);return true;
       }
       if(req.url==='/privacy'){
@@ -49,6 +56,8 @@ export async function createAskBillApplication({publisherId,origin,stage='produc
       }
       return false;
     }});
+  server.on('request',(req,res)=>telemetry.observe(req,res));
+  server.telemetry=telemetry;
   const originalDrain=server.beginReaderDrain;
   server.beginReaderDrain=()=>{api.drain();originalDrain();};
   server.applicationCapacity=()=>({reader:server.readerCapacity(),api:api.capacity()});

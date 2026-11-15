@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "description": "Aggregate alert rules evaluated against /health/metrics snapshots (AB-103). No rule uses question text, audio, IPs or identities.",
+  "rules": [
+    {"id": "reader-5xx", "kind": "error_rate", "routes": ["reader", "info"], "minRequests": 20, "maxRatio": 0.02, "severity": "page", "summary": "Public reader is returning server errors"},
+    {"id": "api-5xx", "kind": "error_rate", "routes": ["api"], "minRequests": 20, "maxRatio": 0.05, "severity": "page", "summary": "Conversation/session API is returning server errors"},
+    {"id": "publisher-5xx", "kind": "error_rate", "routes": ["publisher"], "minRequests": 5, "maxRatio": 0.1, "severity": "ticket", "summary": "Publisher workflow is returning server errors"},
+    {"id": "reader-slow", "kind": "slow_ratio", "routes": ["reader"], "thresholdMs": 1000, "minRequests": 20, "maxRatio": 0.1, "severity": "ticket", "summary": "More than 10% of reader pages take over 1 s"},
+    {"id": "readiness", "kind": "event_count", "event": "readiness_failed", "maxCount": 0, "severity": "page", "summary": "Database readiness probe failed"},
+    {"id": "provider-failures", "kind": "event_count", "event": "provider_failure", "maxCount": 10, "severity": "ticket", "summary": "AI provider failures exceed budget since start"},
+    {"id": "quota", "kind": "event_count", "event": "quota_exceeded", "maxCount": 200, "severity": "info", "summary": "Session or daily quota ceiling reached repeatedly"}
+  ]
+}
