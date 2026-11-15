@@ -88,7 +88,9 @@ export async function buildApplicationRuntime({env=process.env,demo=false}={}){
     };
     const server=await createAskBillApplication({...config,sessions,lookupPublishedPack,lookupPublishedCatalog,provider,reviewer,speech,transcription,
       authorizeSpeechSegment,publisherHandler,readiness,metricsToken:env.ASK_BILL_METRICS_TOKEN??null,
-      diagnostics:pool?()=>collectDiagnostics(pool,config.publisherId):null});
+      diagnostics:pool?()=>collectDiagnostics(pool,config.publisherId):null,
+      // Candidate 3D stage: off unless explicitly enabled; never affects reading.
+      character:{enabled:env.ASK_BILL_CHARACTER_STAGE==='true',assetFile:env.ASK_BILL_CHARACTER_ASSET??'bill-11.glb'}});
     cleanupTimer=setInterval(()=>{sessions.cleanup().catch(()=>{});},60000);cleanupTimer.unref();
     return {server,config,async close(){
       if(closing)return;closing=true;clearInterval(cleanupTimer);server.beginReaderDrain();

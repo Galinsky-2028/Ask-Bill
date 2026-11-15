@@ -157,3 +157,11 @@
   a[href^="#"]{display:none}
 }
 
+.bill-stage{display:flex;flex-direction:column;align-items:center;gap:.25rem;margin:.5rem 0}
+.bill-stage[hidden]{display:none}
+.bill-stage-canvas canvas{display:block;width:220px;height:260px;max-width:100%}
+.bill-stage-hide{font:inherit;font-size:.85rem;padding:.3rem .6rem;border:1px solid #325f91;border-radius:.4rem;background:#fff;color:#18263b}
+.bill-stage-hide:focus-visible{outline:3px solid #135baa;outline-offset:2px}
+@media(max-width:600px){.bill-stage-canvas canvas{width:154px;height:182px}}
+@media(prefers-reduced-motion:reduce){.bill-stage{display:none}}
+@media print{.bill-stage{display:none}}

@@ -16,3 +16,6 @@
 .DS_Store
 assets/bill/source
 assets/bill/runtime
+# Candidate character GLBs are runtime assets (optional stage), not build output.
+!assets/bill/characters/dist
+!assets/bill/characters/dist/**

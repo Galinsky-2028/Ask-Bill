@@ -18,6 +18,8 @@ COPY --from=builder --chown=node:node /opt/ask-bill/migrations ./migrations
 COPY --from=builder --chown=node:node /opt/ask-bill/scripts ./scripts
 COPY --from=builder --chown=node:node /opt/ask-bill/infra ./infra
 COPY --from=builder --chown=node:node /opt/ask-bill/content ./content
+# Candidate character GLBs (served only when ASK_BILL_CHARACTER_STAGE=true).
+COPY --from=builder --chown=node:node /opt/ask-bill/assets/bill/characters/dist ./assets/bill/characters/dist
 COPY --from=builder --chown=node:node /opt/ask-bill/package.json ./package.json
 RUN chmod 0555 infra/run-source-sandbox.sh infra/start-web.sh
 ENV NODE_ENV=production
