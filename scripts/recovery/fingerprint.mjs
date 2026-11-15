@@ -40,6 +40,8 @@ export async function fingerprint(pool,{publisherId}){
   try{
     await client.query('BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY');
     await client.query("SELECT set_config('ask_bill.publisher_id',$1,true)",[publisherId.toLowerCase()]);
+    // A superuser or BYPASSRLS session sees every publisher; record the scope so comparisons stay like-for-like.
+    const scope=(await client.query('SELECT rolsuper OR rolbypassrls AS all FROM pg_catalog.pg_roles WHERE rolname=current_user')).rows[0]?.all?'all-publishers':'publisher';
     const migrations=(await client.query('SELECT path,sha256 FROM ask_bill_meta.schema_migrations ORDER BY path')).rows.map(r=>r.path+':'+r.sha256);
     const counts={};
     for(const table of [...DURABLE_TABLES,...EPHEMERAL_TABLES]){
@@ -54,7 +56,7 @@ export async function fingerprint(pool,{publisherId}){
       JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='ask_bill' AND c.relkind='r' ORDER BY c.relname`)).rows;
     const unprotected=rls.filter(r=>!r.relrowsecurity||!r.relforcerowsecurity).map(r=>r.relname);
     await client.query('COMMIT');
-    return {product:'ask-bill',fingerprint:1,publisherId:publisherId.toLowerCase(),
+    return {product:'ask-bill',fingerprint:1,publisherId:publisherId.toLowerCase(),scope,
       migrations:{count:migrations.length,sha256:setDigest(migrations)},counts,digests,rls:{tables:rls.length,unprotected}};
   }catch(error){try{await client.query('ROLLBACK');}catch{}throw error;}finally{client.release();}
 }
@@ -63,6 +65,7 @@ export async function fingerprint(pool,{publisherId}){
 export function compareFingerprints(before,after){
   const diffs=[];
   if(before.publisherId!==after.publisherId)diffs.push('publisher differs');
+  if(before.scope!==after.scope)diffs.push(`row visibility differs (${before.scope} vs ${after.scope}); fingerprint both with the same role`);
   if(before.migrations.sha256!==after.migrations.sha256)diffs.push('migration journal differs');
   for(const table of DURABLE_TABLES)if(before.counts[table]!==after.counts[table])
     diffs.push(`${table} rows ${before.counts[table]} -> ${after.counts[table]}`);

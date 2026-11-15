@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {compareFingerprints,setDigest,DURABLE_TABLES} from '../scripts/recovery/fingerprint.mjs';
 import {drillSettings,runRestoreDrill} from '../scripts/recovery/neon-restore-drill.mjs';
 
-const base=()=>({publisherId:'9eca01ac-5317-4442-894e-6f63ea23fdc1',migrations:{count:13,sha256:'a'},
+const base=()=>({publisherId:'9eca01ac-5317-4442-894e-6f63ea23fdc1',scope:'publisher',migrations:{count:13,sha256:'a'},
   counts:Object.fromEntries(DURABLE_TABLES.map(t=>[t,1])),
   digests:{sourceVersions:{count:1,sha256:'s'},sourceObjects:{count:1,sha256:'o'},releasePacks:{count:0,sha256:'r'},activeReleases:{count:0,sha256:'x'},auditEvents:{count:3,sha256:'e'}},
   rls:{tables:30,unprotected:[]}});
@@ -23,6 +23,8 @@ test('restore comparison flags lost rows, changed hashes and missing RLS, ignore
   assert(diffs.some(d=>d.startsWith('bill_versions rows 1 -> 0')));
   assert(diffs.some(d=>d.startsWith('sourceVersions digest differs')));
   assert(diffs.some(d=>d.includes('row-level security missing on bills')));
+  const other=structuredClone(before);other.scope='all-publishers';
+  assert(compareFingerprints(before,other).some(d=>d.startsWith('row visibility differs')));
 });
 
 test('drill settings require an explicit project, key and a past timestamp',()=>{

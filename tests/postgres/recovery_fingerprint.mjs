@@ -14,7 +14,8 @@ try{
     await migrate({pool});
     const publisherId=randomUUID(),first=await fingerprint(pool,{publisherId}),second=await fingerprint(pool,{publisherId});
     assert.equal(first.migrations.count,(await migrationFiles()).length);
-    for(const table of DURABLE_TABLES)assert.equal(first.counts[table],0,table);
+    for(const table of DURABLE_TABLES)assert(Number.isInteger(first.counts[table]),table);
+    assert(['publisher','all-publishers'].includes(first.scope));
     assert.deepEqual(first.rls.unprotected,[]);
     assert(first.rls.tables>=DURABLE_TABLES.length);
     assert.deepEqual(compareFingerprints(first,second),[]);
