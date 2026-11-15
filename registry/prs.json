@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 112,
-  "observedAt": "2026-11-15T18:41:13Z",
+  "observedAt": "2026-11-15T19:07:17Z",
   "approval": {
     "basis": "Owner explicitly directed the complete Ask Bill architecture and PR plan (16 October 2026) and installation of foundational commit.",
     "source": "docs/DEVELOPMENT_PLAN.md"
@@ -2565,7 +2565,9 @@
       "title": "Isolated Three renderer and backend parity",
       "origin": "original",
       "prs": [],
-      "contributingPrs": [],
+      "contributingPrs": [
+        118
+      ],
       "priorEvidencePrs": [],
       "dependsOn": [
         "AB-003",
@@ -2585,7 +2587,7 @@
         "Test actual browser backends, intentional initialization failure and teardown/recreation with the same session."
       ],
       "rollback": "Switch to poster mode and preserve all DOM controls and content.",
-      "implementationStatus": "not_started",
+      "implementationStatus": "in_progress",
       "operationalAcceptance": "not_run",
       "phase": "F5",
       "gate": "G5",
@@ -2602,7 +2604,9 @@
       "title": "Animation mixer controller and layer masks",
       "origin": "original",
       "prs": [],
-      "contributingPrs": [],
+      "contributingPrs": [
+        118
+      ],
       "priorEvidencePrs": [],
       "dependsOn": [
         "AB-056",
@@ -2622,7 +2626,7 @@
         "Replay fixed pose times and randomized valid transitions; compare against source renders and bounds."
       ],
       "rollback": "Disable unsafe layered combinations and use the previous animation controller.",
-      "implementationStatus": "not_started",
+      "implementationStatus": "in_progress",
       "operationalAcceptance": "not_run",
       "phase": "F5",
       "gate": "G5",
@@ -2639,7 +2643,8 @@
       "title": "DOM anchors and layout revision registry",
       "origin": "original",
       "prs": [
-        64
+        64,
+        113
       ],
       "contributingPrs": [
         63
@@ -2834,7 +2839,9 @@
       "title": "Gaze pointer targets and source emphasis",
       "origin": "original",
       "prs": [],
-      "contributingPrs": [],
+      "contributingPrs": [
+        118
+      ],
       "priorEvidencePrs": [],
       "dependsOn": [
         "AB-036",
@@ -2856,7 +2863,7 @@
         "Shift text during the point, withdraw a source and switch versions; verify stale target cancellation."
       ],
       "rollback": "Keep source highlighting and suppress the gesture when alignment is uncertain.",
-      "implementationStatus": "not_started",
+      "implementationStatus": "in_progress",
       "operationalAcceptance": "not_run",
       "phase": "F5",
       "gate": "G5",
@@ -3118,7 +3125,9 @@
       "id": "AB-077",
       "title": "Reader character integration and failure states",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        118
+      ],
       "contributingPrs": [],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -3146,7 +3155,7 @@
         "Execute the golden journey with failed model, asset, planner and rendering components separately."
       ],
       "rollback": "Disable the failing enhancement behind its feature flag and keep the reader available.",
-      "implementationStatus": "not_started",
+      "implementationStatus": "in_progress",
       "operationalAcceptance": "not_run",
       "phase": "F5",
       "gate": "G5",
@@ -4084,7 +4093,9 @@
       "id": "AB-099",
       "title": "Full accessibility and browser compatibility audit",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        115
+      ],
       "contributingPrs": [
         101
       ],
@@ -4269,7 +4280,8 @@
       "title": "Operational telemetry alerts and diagnostics",
       "origin": "original",
       "prs": [
-        110
+        110,
+        116
       ],
       "contributingPrs": [],
       "priorEvidencePrs": [],
@@ -4312,7 +4324,9 @@
       "id": "AB-104",
       "title": "Backup restore disaster recovery and incident drills",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        114
+      ],
       "contributingPrs": [],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -4338,7 +4352,7 @@
         "Restore to isolated staging, simulate a lost asset pointer and revoke a compromised credential; retain drill timings."
       ],
       "rollback": "Stop writes and restore the last known good compatible release and database snapshot.",
-      "implementationStatus": "not_started",
+      "implementationStatus": "in_progress",
       "operationalAcceptance": "not_run",
       "phase": "F8",
       "gate": "G8",
@@ -4486,7 +4500,9 @@
       "id": "AB-108",
       "title": "Operator documentation and agent continuation kit",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        117
+      ],
       "contributingPrs": [
         101
       ],
@@ -6016,6 +6032,90 @@
       "updatedAt": "2026-11-15T18:40:57Z",
       "mergedAt": "2026-11-15T18:40:56Z",
       "closedAt": "2026-11-15T18:40:57Z",
+      "draft": false
+    },
+    {
+      "id": 5325901429,
+      "number": 112,
+      "title": "AB-105: Record staging deployment and refresh registry mappings",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/112",
+      "createdAt": "2026-11-15T18:41:53Z",
+      "updatedAt": "2026-11-15T18:43:24Z",
+      "mergedAt": "2026-11-15T18:43:24Z",
+      "closedAt": "2026-11-15T18:43:24Z",
+      "draft": false
+    },
+    {
+      "id": 5325927167,
+      "number": 113,
+      "title": "AB-065: De-flake scroll-invalidation browser check",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/113",
+      "createdAt": "2026-11-15T18:44:49Z",
+      "updatedAt": "2026-11-15T18:51:16Z",
+      "mergedAt": "2026-11-15T18:51:16Z",
+      "closedAt": "2026-11-15T18:51:16Z",
+      "draft": false
+    },
+    {
+      "id": 5325952446,
+      "number": 114,
+      "title": "AB-104: Restore fingerprint, Neon PITR drill and recovery runbook",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/114",
+      "createdAt": "2026-11-15T18:47:38Z",
+      "updatedAt": "2026-11-15T18:55:39Z",
+      "mergedAt": "2026-11-15T18:55:38Z",
+      "closedAt": "2026-11-15T18:55:38Z",
+      "draft": false
+    },
+    {
+      "id": 5325980331,
+      "number": 115,
+      "title": "AB-099: axe WCAG 2.2 AA and keyboard audit across a browser matrix",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/115",
+      "createdAt": "2026-11-15T18:51:02Z",
+      "updatedAt": "2026-11-15T18:55:42Z",
+      "mergedAt": "2026-11-15T18:55:42Z",
+      "closedAt": "2026-11-15T18:55:42Z",
+      "draft": false
+    },
+    {
+      "id": 5326016628,
+      "number": 116,
+      "title": "AB-103: Worker diagnostics, alert delivery and scheduled staging check",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/116",
+      "createdAt": "2026-11-15T18:55:17Z",
+      "updatedAt": "2026-11-15T19:02:57Z",
+      "mergedAt": "2026-11-15T19:02:57Z",
+      "closedAt": "2026-11-15T19:02:57Z",
+      "draft": false
+    },
+    {
+      "id": 5326020766,
+      "number": 117,
+      "title": "AB-108: Operator runbook with verified paths and release procedure",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/117",
+      "createdAt": "2026-11-15T18:55:46Z",
+      "updatedAt": "2026-11-15T19:03:01Z",
+      "mergedAt": "2026-11-15T19:03:00Z",
+      "closedAt": "2026-11-15T19:03:00Z",
+      "draft": false
+    },
+    {
+      "id": 5326083885,
+      "number": 118,
+      "title": "AB-077: Optional candidate character stage with contained fallbacks",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/118",
+      "createdAt": "2026-11-15T19:03:04Z",
+      "updatedAt": "2026-11-15T19:07:00Z",
+      "mergedAt": "2026-11-15T19:07:00Z",
+      "closedAt": "2026-11-15T19:07:00Z",
       "draft": false
     }
   ]

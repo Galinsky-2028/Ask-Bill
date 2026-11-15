@@ -1,6 +1,6 @@
 # Ask Bill — verified development checkpoint
 
-GitHub observation: **2026-11-15T18:41Z**, repository `Galinsky-2028/Ask-Bill` (formerly `neophilism/Ask-Bill`), main `87a36f45`.
+GitHub observation: **2026-11-15T19:07Z**, repository `Galinsky-2028/Ask-Bill` (formerly `neophilism/Ask-Bill`), main `627ccc46`.
 
 ## Merged in this session (all five required jobs green on each exact head)
 
@@ -12,7 +12,14 @@ GitHub observation: **2026-11-15T18:41Z**, repository `Galinsky-2028/Ask-Bill` (
 | #110 | AB-103 (partial) | Aggregate privacy-minimized telemetry, token-gated `/health/metrics`, `infra/alerts/rules.json` |
 | #111 | AB-102 (partial) | Spend-safe reader load harness and local baseline |
 
-Draft PR #105 (AB-048 character topology) remains open and untouched. The browser job's scroll-invalidation check (`test_layout_anchor_registry.py`) failed once on #111 and passed on rerun; treat it as flaky.
+| #113 | AB-065 | De-flaked the scroll-invalidation browser check (it now waits for the scroll event) |
+| #114 | AB-104 (partial) | Restore fingerprint, Neon PITR drill (live drill 3.4 s, branch deleted), `docs/ops/RECOVERY.md` |
+| #115 | AB-099 (partial) | axe WCAG 2.2 AA + keyboard audit; CI matrix Chromium/Firefox/WebKit; `docs/accessibility/AUDIT.md` |
+| #116 | AB-103 (partial) | Queue/outbox/retention diagnostics, webhook alert delivery, 6-hourly `ops-alerts` workflow |
+| #117 | AB-108 (partial) | `docs/ops/OPERATOR_RUNBOOK.md` with a path-verification test |
+| #118 | AB-063/064/070/077 (partial) | Optional candidate 3D stage (off by default), clip controller, version-safe pointing, contained fallbacks |
+
+Draft PR #105 (AB-048 character topology) remains open and untouched. No art unit (AB-045–AB-062) is claimed. The browser job's scroll-invalidation check (`test_layout_anchor_registry.py`) failed once on #111 and passed on rerun; treat it as flaky.
 
 ## Hosted staging (live, providers off)
 
@@ -31,4 +38,4 @@ Draft PR #105 (AB-048 character topology) remains open and untouched. The browse
 
 ## Continue from evidence
 
-Re-query main, open PRs and exact-head CI. Remaining no-input work: backup/restore drill scripts (AB-104), operator runbook (AB-108), accessibility/browser matrix (AB-099), character runtime renderer/mixer with static fallbacks (AB-063/064/070/077), alert delivery and worker diagnostics (AB-103). Production character mesh, rig, textures and animation (AB-048–AB-062) need an artist or paid Meshy credits. Never infer operational acceptance from merges.
+Re-query main, open PRs and exact-head CI. Remaining no-input work: WebGPU parity and facial/blink/gaze layers (AB-063/064), lip-sync binding (AB-083 with live TTS), follow mode and walking (AB-069/072), golden-pose visual regression (AB-060 runtime side), source-freshness alerts. Owner inputs also needed: GitHub secret `ASK_BILL_METRICS_TOKEN` (same value as the Render env var) so the scheduled alert check runs, plus optional `ASK_BILL_ALERT_WEBHOOK_URL`. To try the candidate stage on staging, set `ASK_BILL_CHARACTER_STAGE=true` on Render. Production character mesh, rig, textures and animation (AB-048–AB-062) need an artist or paid Meshy credits. Never infer operational acceptance from merges.
