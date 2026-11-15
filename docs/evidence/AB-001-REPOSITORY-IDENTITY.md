@@ -15,3 +15,6 @@ After the repository moved, `scripts/validate-pr-registry.mjs` asserted `GITHUB_
 
 ## Status
 No implementation or operational status changed. Rollback: revert this commit.
+
+## CI runner pin (same PR, required to unblock it)
+`.github/workflows/ci.yml` browser job: `ubuntu-latest` now resolves to Ubuntu 26.04, where the pinned Playwright 1.57.0 refuses to install Chromium ("Playwright does not support chromium on ubuntu26.04-x64", PR #108 run). The browser job is pinned to `ubuntu-24.04`. Both fixes are needed for any PR to pass, so they ship together.
