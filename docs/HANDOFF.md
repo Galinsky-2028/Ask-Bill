@@ -1,6 +1,6 @@
 # Ask Bill: operational agent handoff
 
-**Repository:** `neophilism/Ask-Bill` — <https://github.com/neophilism/Ask-Bill>  
+**Repository:** `Galinsky-2028/Ask-Bill` — <https://github.com/Galinsky-2028/Ask-Bill> (formerly `neophilism/Ask-Bill`; historical evidence files keep the old name)  
 **Handoff refreshed:** 2026-10-17; verify the dated snapshot and live GitHub state before continuing.
 **Scope:** Independent Ask Bill product, operated separately from unrelated websites and companies. No external-product integrations.  
 **Plan:** All 112 original work units with 490 explicit local dependency links, phases F1-F8 and release gates G1-G8.  

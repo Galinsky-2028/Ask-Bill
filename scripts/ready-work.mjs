@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 const url=new URL('../registry/prs.json',import.meta.url);
 const registry=JSON.parse(await readFile(url,'utf8'));
-if(registry.repository!=='neophilism/Ask-Bill'||registry.planVerified!==true)throw Error('Unexpected source registry');
+if(registry.repository!=='Galinsky-2028/Ask-Bill'||registry.planVerified!==true)throw Error('Unexpected source registry');
 const acceptedArg=process.argv.indexOf('--accepted');
 const accepted=acceptedArg<0?[]:JSON.parse(await readFile(process.argv[acceptedArg+1],'utf8'));
 if(!Array.isArray(accepted)||accepted.some(x=>typeof x!=='string'))throw Error('--accepted requires a JSON array of accepted unit IDs');
