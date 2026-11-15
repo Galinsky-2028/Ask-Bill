@@ -4,6 +4,8 @@ import {createAudioPlaybackController} from '/browser/packages/voice/playback/co
 
 const root=document.querySelector('[data-reader]');
 if(root)initializeReader(root);
+// Optional character stage: loaded after the reader, inert unless the server enables it; failures are ignored.
+if(root)import('/experience/character-stage.mjs').catch(()=>{});
 
 function initializeReader(root){
  const $=id=>document.getElementById(id),versionId=root.dataset.versionId,billId=root.dataset.billId;
@@ -77,6 +79,7 @@ function initializeReader(root){
  }
  function cancelActive({announce=false}={}){
   generation++;request?.abort();request=null;busy=false;
+  document.dispatchEvent(new CustomEvent('askbill:answer-state',{detail:{phase:'done'}}));
   voiceInput?.cancel();stopAudio();
   const last=entries.at(-1);
   if(last?.status==='answering')last.status='stopped';
@@ -92,6 +95,8 @@ function initializeReader(root){
  function openSource(card,button){
   const source=sources.get(card.provisionId);if(!source||card.versionId!==versionId)return;
   lastSourceButton=button;
+  // Trusted, already version-checked focus for the optional character stage.
+  document.dispatchEvent(new CustomEvent('askbill:source-focus',{detail:{versionId,provisionId:card.provisionId}}));
   $('source-drawer-title').textContent=card.citationLabel;
   $('source-drawer-version').textContent='Exact wording · Version '+versionId;
   $('source-drawer-quote').textContent=card.quote;
@@ -194,6 +199,7 @@ function initializeReader(root){
   if(question.length<3||question.length>2000){setStatus('Use 3–2,000 characters for your question.');$('question').focus();return;}
   cancelActive();epoch++;voiceInput?.invalidate(activeScope());
   const token=++generation,requestEpoch=epoch,csrf=session.csrfToken,abort=new AbortController();request=abort;busy=true;
+  document.dispatchEvent(new CustomEvent('askbill:answer-state',{detail:{phase:'answering'}}));
   const entry={question,segments:[],status:'answering',answerId:null,epoch:requestEpoch,selectedSpan};
   entries.push(entry);if(entries.length>20)entries.shift();renderHistory();updateQuestionState();
   setStatus('Finding and checking source passages…');
@@ -206,6 +212,7 @@ function initializeReader(root){
    else if(update.type==='answer.failed')entry.status='failed';
    renderHistory();
    if(update.type==='segment.validated'||update.type==='correction')setStatus(update.type==='correction'?'An earlier passage was corrected. Check the updated source cards.':'A checked passage is ready. You can inspect its source.');
+   if(update.finished)document.dispatchEvent(new CustomEvent('askbill:answer-state',{detail:{phase:'done'}}));
    if(update.finished)setStatus(entry.status==='completed'?(entry.segments.length?'Answer complete. Open a source card to check the exact wording.':'No supported answer was available. Try a more specific question or select a passage.'):entry.status==='stopped'?'Answer stopped.':'The answer service could not complete this response. You can still read its verified source cards.');
   }});
   try{
@@ -218,6 +225,7 @@ function initializeReader(root){
   }catch(error){
    if(generation!==token||session?.csrfToken!==csrf)return;
    entry.status=abort.signal.aborted?'stopped':'failed';
+   document.dispatchEvent(new CustomEvent('askbill:answer-state',{detail:{phase:'done'}}));
    setStatus(abort.signal.aborted?'The answer timed out. You can try again or read the original source.':
     error.name==='ReaderClientError'?'This response could not be matched safely to the displayed source. It was stopped; try again or read the original wording.':error.message||'The answer service is unavailable. The original source remains readable.');
   }finally{

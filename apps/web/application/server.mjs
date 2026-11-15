@@ -11,8 +11,20 @@ const modules=new Map([
   ['/browser/packages/ui/citations/index.mjs','../../../packages/ui/citations/index.mjs'],
   ['/browser/packages/contracts/dist/index.js','../../../packages/contracts/dist/index.js'],
   ['/browser/packages/voice/stt/push-to-talk.mjs','../../../packages/voice/stt/push-to-talk.mjs'],
-  ['/browser/packages/voice/playback/controller.mjs','../../../packages/voice/playback/controller.mjs']
+  ['/browser/packages/voice/playback/controller.mjs','../../../packages/voice/playback/controller.mjs'],
+  ['/experience/character-stage.mjs','../experience/character-stage.mjs'],
+  ['/browser/packages/character/renderer/stage.mjs','../../../packages/character/renderer/stage.mjs'],
+  ['/browser/packages/character/animation/mixer.mjs','../../../packages/character/animation/mixer.mjs'],
+  ['/browser/packages/character/attention/targets.mjs','../../../packages/character/attention/targets.mjs'],
+  ['/browser/packages/character/layout/registry.mjs','../../../packages/character/layout/registry.mjs']
 ]);
+// three.js is served same-origin (CSP script-src 'self'); its bare 'three' imports are rewritten.
+const vendor=new Map([
+  ['/vendor/three/three.module.min.js','three/build/three.module.min.js'],
+  ['/vendor/three/loaders/GLTFLoader.js','three/examples/jsm/loaders/GLTFLoader.js'],
+  ['/vendor/three/utils/BufferGeometryUtils.js','three/examples/jsm/utils/BufferGeometryUtils.js']
+]);
+const CHARACTER_ASSET=/^bill-[0-9]{2}\.glb$/;
 const security={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cross-Origin-Resource-Policy':'same-origin'};
 const escape=text=>text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function send(res,status,body,type='text/html; charset=utf-8',head=false,extra={}){
@@ -21,11 +33,21 @@ function send(res,status,body,type='text/html; charset=utf-8',head=false,extra={
 function information(title,content){return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+escape(title)+' — Ask Bill</title><link rel="stylesheet" href="/public-reader.css"></head><body><header><a href="/bills">Ask Bill</a></header><main><h1>'+escape(title)+'</h1>'+content+'</main></body></html>';}
 export async function createAskBillApplication({publisherId,origin,stage='production',sessions,lookupPublishedPack,lookupPublishedCatalog,
   provider=null,reviewer=null,speech=null,transcription=null,publisherHandler=null,authorizeSpeechSegment=()=>{},
-  readiness=async()=>true,buildSha='development',maxInflight=25,telemetry=createTelemetry(),metricsToken=null,diagnostics=null}={}){
+  readiness=async()=>true,buildSha='development',maxInflight=25,telemetry=createTelemetry(),metricsToken=null,diagnostics=null,character={enabled:false}}={}){
   const conversation=createConversationService({publisherId,lookupPublishedPack,provider,reviewer});
   const api=createApplicationApi({publisherId,origin,stage,sessions,conversation,lookupPublishedPack,speech,transcription,authorizeSpeechSegment,maxInflight});
   const staticFiles=new Map();
   for(const [path,file] of modules)staticFiles.set(path,await readFile(new URL(file,import.meta.url)));
+  const characterEnabled=character?.enabled===true;
+  if(characterEnabled){
+    if(!CHARACTER_ASSET.test(character.assetFile??''))throw Error('INVALID_CHARACTER_ASSET');
+    for(const [path,specifier] of vendor){
+      const source=await readFile(new URL('../../../node_modules/'+specifier,import.meta.url),'utf8');
+      staticFiles.set(path,Buffer.from(source.replaceAll("from 'three'","from '/vendor/three/three.module.min.js'")));
+    }
+  }
+  const characterConfig=Buffer.from(JSON.stringify(characterEnabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',status:'candidate-not-approved'}:{enabled:false}));
+  let characterAsset=null;
   const server=await createPublishedSourceServer({publisherId,lookupPublishedPack,lookupPublishedCatalog,interactive:true,
     requestHandler:async(req,res)=>{
       if(stage==='production')res.setHeader('Strict-Transport-Security','max-age=31536000');
@@ -34,6 +56,11 @@ export async function createAskBillApplication({publisherId,origin,stage='produc
       if(!['GET','HEAD'].includes(req.method))return false;
       const head=req.method==='HEAD';
       if(staticFiles.has(req.url)){send(res,200,staticFiles.get(req.url),'text/javascript; charset=utf-8',head);return true;}
+      if(req.url==='/experience/character.json'){send(res,200,characterConfig,'application/json',head);return true;}
+      if(req.url==='/experience/assets/bill.glb'&&characterEnabled){
+        characterAsset??=await readFile(new URL('../../../assets/bill/characters/dist/'+character.assetFile,import.meta.url));
+        send(res,200,characterAsset,'model/gltf-binary',head,{'Cache-Control':'public, max-age=86400'});return true;
+      }
       if(req.url==='/'){res.writeHead(302,{...security,Location:'/bills'});res.end();return true;}
       if(req.url==='/health/metrics'){
         // Disabled (404) unless an operator token is configured; aggregate counters only.

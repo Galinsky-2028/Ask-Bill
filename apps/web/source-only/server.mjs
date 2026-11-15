@@ -42,7 +42,7 @@ export async function createPublishedSourceServer({publisherId,lookupPublishedPa
  if(lookupPublishedCatalog!==undefined && typeof lookupPublishedCatalog!=='function')throw new Error('TRUSTED_CATALOG_ADAPTER_REQUIRED');
  if(!Number.isSafeInteger(maxInflight)||maxInflight<1||maxInflight>256)throw new Error('INVALID_PUBLIC_READER_CAPACITY');
  if(typeof interactive!=='boolean'||(requestHandler!==undefined&&typeof requestHandler!=='function'))throw new Error('INVALID_APPLICATION_ADAPTER');
- const interactiveHeaders=interactive?{'Content-Security-Policy':"default-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; style-src 'self'; script-src 'self'; connect-src 'self'; media-src 'self' blob:; img-src 'self' data:; worker-src 'self'"}:{};
+ const interactiveHeaders=interactive?{'Content-Security-Policy':"default-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; style-src 'self'; script-src 'self'; connect-src 'self' blob:; media-src 'self' blob:; img-src 'self' data: blob:; worker-src 'self'"}:{};
  const embedAllowed=validateEmbedOrigins(embedOrigins);
  const read=createPublicReader({lookupPublishedPack,interactive});
  const css=await readFile(new URL('./public-reader.css',import.meta.url),'utf8');

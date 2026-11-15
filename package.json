@@ -31,5 +31,8 @@
   "devDependencies": {
     "axe-core": "4.10.3",
     "typescript": "5.8.3"
+  },
+  "dependencies": {
+    "three": "0.170.0"
   }
 }
