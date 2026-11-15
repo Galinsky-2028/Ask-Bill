@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { parsePrRegistry,titleWorkUnitIds } from '../registry/pr-contract.mjs';
 import { validateFiles } from '../scripts/validate-pr-registry.mjs';
-const repository='neophilism/Ask-Bill';
+const repository='Galinsky-2028/Ask-Bill';
 const doc=JSON.parse(await readFile(new URL('../registry/prs.json',import.meta.url),'utf8'));
 const check=d=>parsePrRegistry(JSON.stringify(d),repository);
 test('foundation plan validates and has all 112 approved original units',async()=>{const r=await validateFiles();assert.equal(r.planned,112);assert.equal(r.edges,490)});

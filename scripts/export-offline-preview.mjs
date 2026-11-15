@@ -36,7 +36,7 @@ await writeFile(resolve(target, 'README.txt'), [
   'Its three answers are prewritten and limited to the excerpt; no live AI or legal advice.',
   'The friendly illustration is a placeholder, not the finished 3D character.',
   'No microphone, analytics, or personal questions are transmitted.',
-  'Source: neophilism/Ask-Bill; developed independently of other products.',
+  'Source: Galinsky-2028/Ask-Bill; developed independently of other products.',
   ''
 ].join('\n'));
 console.log(`Ask Bill offline preview exported: ${relative(root, target)}`);
