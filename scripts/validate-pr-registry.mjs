@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import { parsePrRegistry } from '../registry/pr-contract.mjs';
 
-export const REPOSITORY='neophilism/Ask-Bill';
+export const REPOSITORY='Galinsky-2028/Ask-Bill';
 const root=new URL('../',import.meta.url);
 const read=async p=>readFile(new URL(p,root),'utf8');
 const digest=v=>createHash('sha256').update(v).digest('hex');
