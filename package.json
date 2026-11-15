@@ -29,6 +29,7 @@
     "assets:validate": "node tools/assets/verify.mjs"
   },
   "devDependencies": {
+    "axe-core": "4.10.3",
     "typescript": "5.8.3"
   }
 }
