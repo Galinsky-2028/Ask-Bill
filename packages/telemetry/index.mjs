@@ -71,6 +71,10 @@ export function evaluateAlerts(snapshot,rules){
     }else if(rule.kind==='event_count'){
       const n=snapshot.events[rule.event]??0;
       if(n>rule.maxCount)firing.push({id:rule.id,severity:rule.severity,summary:rule.summary,observed:{[rule.event]:n}});
+    }else if(rule.kind==='gauge_max'){
+      // Dot path into the snapshot, e.g. diagnostics.jobs.dead; absent gauges never fire.
+      const value=rule.path.split('.').reduce((node,key)=>node!=null&&Object.hasOwn(node,key)?node[key]:undefined,snapshot);
+      if(typeof value==='number'&&value>rule.max)firing.push({id:rule.id,severity:rule.severity,summary:rule.summary,observed:{[rule.path]:value}});
     }else throw Error('ALERT_RULE_UNKNOWN');
   }
   return firing;

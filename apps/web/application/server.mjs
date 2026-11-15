@@ -21,7 +21,7 @@ function send(res,status,body,type='text/html; charset=utf-8',head=false,extra={
 function information(title,content){return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>'+escape(title)+' — Ask Bill</title><link rel="stylesheet" href="/public-reader.css"></head><body><header><a href="/bills">Ask Bill</a></header><main><h1>'+escape(title)+'</h1>'+content+'</main></body></html>';}
 export async function createAskBillApplication({publisherId,origin,stage='production',sessions,lookupPublishedPack,lookupPublishedCatalog,
   provider=null,reviewer=null,speech=null,transcription=null,publisherHandler=null,authorizeSpeechSegment=()=>{},
-  readiness=async()=>true,buildSha='development',maxInflight=25,telemetry=createTelemetry(),metricsToken=null}={}){
+  readiness=async()=>true,buildSha='development',maxInflight=25,telemetry=createTelemetry(),metricsToken=null,diagnostics=null}={}){
   const conversation=createConversationService({publisherId,lookupPublishedPack,provider,reviewer});
   const api=createApplicationApi({publisherId,origin,stage,sessions,conversation,lookupPublishedPack,speech,transcription,authorizeSpeechSegment,maxInflight});
   const staticFiles=new Map();
@@ -38,7 +38,9 @@ export async function createAskBillApplication({publisherId,origin,stage='produc
       if(req.url==='/health/metrics'){
         // Disabled (404) unless an operator token is configured; aggregate counters only.
         if(!authorizedMetricsRequest(req,metricsToken))return false;
-        send(res,200,JSON.stringify(telemetry.snapshot()),'application/json',head);return true;
+        const snapshot=telemetry.snapshot();
+        if(diagnostics){try{snapshot.diagnostics=await diagnostics();}catch{snapshot.diagnostics={unavailableCount:1};}}
+        send(res,200,JSON.stringify(snapshot),'application/json',head);return true;
       }
       if(req.url==='/health/live'||req.url==='/health/ready'){
         const ready=req.url==='/health/live'||await readiness();
