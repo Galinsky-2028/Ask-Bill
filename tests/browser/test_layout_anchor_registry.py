@@ -35,6 +35,10 @@ with sync_playwright() as playwright:
         assert initial["viewport"] <= width, "registration must not cause horizontal overflow"
         page.evaluate("window.scrollTo(0,30)")
         page.wait_for_function("window.scrollY >= 30")
+        # scrollTo updates scrollY synchronously, but the scroll event is dispatched on a later
+        # animation frame. Wait (bounded) for the registry to observe it; a registry that never
+        # invalidates on scroll still fails here or at the stale-revision assertion below.
+        page.wait_for_function("previous => window.__registry.layoutRevision !== previous", arg=initial["revision"], timeout=5000)
         result = page.evaluate("""previous => {
           const reg=window.__registry;let stale=false,unknown=false;
           try{reg.measure({expectedRevision:previous});}catch(e){stale=e.code==='STALE_LAYOUT_REVISION';}
