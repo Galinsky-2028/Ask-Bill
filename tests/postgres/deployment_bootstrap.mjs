@@ -25,6 +25,16 @@ try{
     await assert.rejects(bootstrapPublisher({pool,settings:{...settings,name:'different publisher'}}),/EXISTING_PUBLISHER_MISMATCH/);
     await assert.rejects(bootstrapPublisher({pool,settings:{...settings,userId:randomUUID()}}),/EXISTING_IDENTITY_MISMATCH/);
   });
+  await test('deferred owner identity creates the publisher without an identity, then enrolls the real one later',async()=>{
+    const deferred=bootstrapSettings({...env,ASK_BILL_OWNER_IDENTITY:'deferred',ASK_BILL_OIDC_ISSUER:undefined,ASK_BILL_OWNER_OIDC_SUBJECT:undefined,ASK_BILL_RUNTIME_DB_PASSWORD:undefined});
+    const result=await bootstrapPublisher({pool,settings:deferred});assert.equal(result.identityEnrolled,false);
+    const client=await pool.connect();
+    try{
+      await client.query("SELECT set_config('ask_bill.publisher_id',$1,false)",[publisherId]);
+      assert.equal((await client.query('SELECT 1 FROM ask_bill.publisher_auth_identities WHERE publisher_id=$1',[publisherId])).rows.length,1);
+    }finally{client.release();}
+    assert.equal((await bootstrapPublisher({pool,settings})).identityEnrolled,true);
+  });
   await test('runtime role can read tenant data but cannot enroll identities or change migration history',async()=>{
     const appUrl=new URL(raw);appUrl.username=role;appUrl.password=env.ASK_BILL_RUNTIME_DB_PASSWORD;
     const app=await createApplicationPool({connectionString:appUrl.href,hosted:false});
