@@ -112,5 +112,6 @@ node tests/postgres/application_session_store.mjs
 node tests/postgres/application_role_pool.mjs
 node tests/postgres/publisher_workflow.mjs
 node tests/postgres/deployment_bootstrap.mjs
+node tests/postgres/recovery_fingerprint.mjs
 printf '[Ask Bill AB-007/010/013/023] PostgreSQL migrations, isolation, jobs, source provenance and atomic search indexing passed.\n'
 
