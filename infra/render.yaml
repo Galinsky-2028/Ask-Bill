@@ -1,6 +1,9 @@
 # Public web service. Import only into the selected Ask Bill workspace.
 # Optional providers stay off until their private configuration is verified.
-# Database owner credentials are NEVER attached to the running web service.
+# Database owner credentials are NEVER visible to the running web process. On a free plan without a
+# pre-deploy step, infra/start-web.sh applies migrations/bootstrap in separate short-lived processes
+# when ASK_BILL_MIGRATION_DATABASE_URL is set, then starts the web process with those values removed.
+# Remove the one-time maintenance values from the service after the first successful deploy.
 services:
   - type: web
     name: ask-bill-staging-web
@@ -32,6 +35,9 @@ services:
         value: 'false'
       - key: ASK_BILL_ALLOW_OFFICIAL_IMPORTS
         value: 'false'
+      # One-time maintenance values (set privately for the first deploy, then delete):
+      # ASK_BILL_MIGRATION_DATABASE_URL, ASK_BILL_OWNER_USER_ID, ASK_BILL_OWNER_IDENTITY=deferred,
+      # ASK_BILL_PUBLISHER_SLUG, ASK_BILL_PUBLISHER_NAME, ASK_BILL_RUNTIME_DB_ROLE, ASK_BILL_RUNTIME_DB_PASSWORD
       - key: ASK_BILL_DAILY_REQUEST_LIMIT
         value: '1000'
       - key: ASK_BILL_SESSION_REQUEST_LIMIT

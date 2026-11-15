@@ -19,9 +19,10 @@ COPY --from=builder --chown=node:node /opt/ask-bill/scripts ./scripts
 COPY --from=builder --chown=node:node /opt/ask-bill/infra ./infra
 COPY --from=builder --chown=node:node /opt/ask-bill/content ./content
 COPY --from=builder --chown=node:node /opt/ask-bill/package.json ./package.json
-RUN chmod 0555 infra/run-source-sandbox.sh
+RUN chmod 0555 infra/run-source-sandbox.sh infra/start-web.sh
 ENV NODE_ENV=production
 ENV NODE_OPTIONS=--max-old-space-size=256
 USER node
 EXPOSE 10000
-CMD ["node","apps/web/application/start.mjs"]
+# Applies owner-only maintenance only when its one-time values are present, then starts the web process without them.
+CMD ["sh","infra/start-web.sh"]
