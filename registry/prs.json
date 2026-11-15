@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 112,
-  "observedAt": "2026-11-15T18:26:53Z",
+  "observedAt": "2026-11-15T18:41:13Z",
   "approval": {
     "basis": "Owner explicitly directed the complete Ask Bill architecture and PR plan (16 October 2026) and installation of foundational commit.",
     "source": "docs/DEVELOPMENT_PLAN.md"
@@ -16,7 +16,8 @@
       "origin": "original",
       "prs": [
         1,
-        82
+        82,
+        109
       ],
       "contributingPrs": [
         58
@@ -3858,7 +3859,9 @@
       "id": "AB-094",
       "title": "Publisher catalog curation and maintenance UI",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        106
+      ],
       "contributingPrs": [
         101
       ],
@@ -4222,7 +4225,9 @@
       "id": "AB-102",
       "title": "Performance load and cost qualification",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        111
+      ],
       "contributingPrs": [],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -4247,7 +4252,7 @@
         "Run 1,000-reader/25-generation scenarios within approved spend caps and test enforced ceilings and graceful degradation."
       ],
       "rollback": "Reduce active generation concurrency and graphics tiers while fixing measured bottlenecks.",
-      "implementationStatus": "not_started",
+      "implementationStatus": "in_progress",
       "operationalAcceptance": "not_run",
       "phase": "F8",
       "gate": "G8",
@@ -4263,7 +4268,9 @@
       "id": "AB-103",
       "title": "Operational telemetry alerts and diagnostics",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        110
+      ],
       "contributingPrs": [],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -4289,7 +4296,7 @@
         "Inject provider outage, stale source, dead-letter job and quota ceiling and verify actual alert delivery in staging."
       ],
       "rollback": "Disable the problematic telemetry field and retain essential aggregate health signals.",
-      "implementationStatus": "not_started",
+      "implementationStatus": "in_progress",
       "operationalAcceptance": "not_run",
       "phase": "F8",
       "gate": "G8",
@@ -4347,10 +4354,11 @@
       "id": "AB-105",
       "title": "Production service configuration and secret readiness",
       "origin": "original",
-      "prs": [],
-      "contributingPrs": [
-        101,
+      "prs": [
         108
+      ],
+      "contributingPrs": [
+        101
       ],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -5942,12 +5950,12 @@
       "id": 4913066714,
       "number": 106,
       "title": "AB-094: Publisher catalog curation and maintenance UI",
-      "state": "open",
+      "state": "closed",
       "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/106",
       "createdAt": "2026-10-18T21:43:28Z",
-      "updatedAt": "2026-11-01T18:35:27Z",
-      "mergedAt": null,
-      "closedAt": null,
+      "updatedAt": "2026-11-15T18:35:11Z",
+      "mergedAt": "2026-11-15T18:35:11Z",
+      "closedAt": "2026-11-15T18:35:11Z",
       "draft": false
     },
     {
@@ -5966,12 +5974,48 @@
       "id": 5325755303,
       "number": 108,
       "title": "AB-105: Free-plan hosted start with deferred publisher identity",
-      "state": "open",
+      "state": "closed",
       "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/108",
       "createdAt": "2026-11-15T18:24:48Z",
-      "updatedAt": "2026-11-15T18:24:48Z",
-      "mergedAt": null,
-      "closedAt": null,
+      "updatedAt": "2026-11-15T18:32:46Z",
+      "mergedAt": "2026-11-15T18:32:46Z",
+      "closedAt": "2026-11-15T18:32:46Z",
+      "draft": false
+    },
+    {
+      "id": 5325779586,
+      "number": 109,
+      "title": "AB-001: Bind registry to Galinsky-2028/Ask-Bill and refresh PR snapshot",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/109",
+      "createdAt": "2026-11-15T18:27:40Z",
+      "updatedAt": "2026-11-15T18:30:23Z",
+      "mergedAt": "2026-11-15T18:30:23Z",
+      "closedAt": "2026-11-15T18:30:23Z",
+      "draft": false
+    },
+    {
+      "id": 5325813754,
+      "number": 110,
+      "title": "AB-103: Privacy-minimized aggregate telemetry and alert rules",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/110",
+      "createdAt": "2026-11-15T18:31:43Z",
+      "updatedAt": "2026-11-15T18:37:07Z",
+      "mergedAt": "2026-11-15T18:37:07Z",
+      "closedAt": "2026-11-15T18:37:07Z",
+      "draft": false
+    },
+    {
+      "id": 5325855836,
+      "number": 111,
+      "title": "AB-102: Spend-safe reader load harness and local baseline",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/111",
+      "createdAt": "2026-11-15T18:36:36Z",
+      "updatedAt": "2026-11-15T18:40:57Z",
+      "mergedAt": "2026-11-15T18:40:56Z",
+      "closedAt": "2026-11-15T18:40:57Z",
       "draft": false
     }
   ]
