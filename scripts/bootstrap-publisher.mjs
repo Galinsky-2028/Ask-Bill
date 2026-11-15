@@ -11,18 +11,25 @@ const required=(env,key)=>{const value=env[key];if(typeof value!=='string'||!val
 export function bootstrapSettings(env){
   const publisherId=required(env,'ASK_BILL_PUBLISHER_ID'),userId=required(env,'ASK_BILL_OWNER_USER_ID');
   const slug=required(env,'ASK_BILL_PUBLISHER_SLUG'),name=required(env,'ASK_BILL_PUBLISHER_NAME');
-  const issuer=required(env,'ASK_BILL_OIDC_ISSUER'),subject=required(env,'ASK_BILL_OWNER_OIDC_SUBJECT');
+  // `ASK_BILL_OWNER_IDENTITY=deferred` creates the publisher, owner membership and runtime role
+  // before an identity provider exists. No placeholder identity is enrolled; a later run with the
+  // verified issuer and subject enrolls the real login for the same owner user ID.
+  const identityMode=env.ASK_BILL_OWNER_IDENTITY??'enroll';
+  if(!['enroll','deferred'].includes(identityMode))throw Error('BOOTSTRAP_CONFIGURATION');
+  const deferred=identityMode==='deferred'&&env.ASK_BILL_OIDC_ISSUER===undefined&&env.ASK_BILL_OWNER_OIDC_SUBJECT===undefined;
+  if(identityMode==='deferred'&&!deferred)throw Error('BOOTSTRAP_CONFIGURATION');
+  const issuer=deferred?null:required(env,'ASK_BILL_OIDC_ISSUER'),subject=deferred?null:required(env,'ASK_BILL_OWNER_OIDC_SUBJECT');
   const role=required(env,'ASK_BILL_RUNTIME_DB_ROLE'),password=env.ASK_BILL_RUNTIME_DB_PASSWORD;
-  let origin;try{origin=new URL(issuer);}catch{throw Error('BOOTSTRAP_CONFIGURATION');}
+  let origin=null;if(!deferred){try{origin=new URL(issuer);}catch{throw Error('BOOTSTRAP_CONFIGURATION');}}
   if(!uuid.test(publisherId)||!uuid.test(userId)||!/^[a-z0-9][a-z0-9-]{1,78}[a-z0-9]$/.test(slug)||name.length>200||
-    origin.protocol!=='https:'||origin.username||origin.password||origin.search||origin.hash||subject.length>255||
+    (origin&&(origin.protocol!=='https:'||origin.username||origin.password||origin.search||origin.hash||subject.length>255))||
     !/^[a-z][a-z0-9_]{2,62}$/.test(role)||['postgres','public','ask_bill'].includes(role)||
     (password!==undefined&&(password.length<32||password.length>256||/[\u0000-\u001f\\]/u.test(password))))throw Error('BOOTSTRAP_CONFIGURATION');
   return {publisherId:publisherId.toLowerCase(),userId:userId.toLowerCase(),slug,name,issuer,subject,role,password};
 }
 export async function bootstrapPublisher({pool,settings}={}){
   const {publisherId,userId,slug,name,issuer,subject,role,password}=settings;
-  const identityHash=publisherIdentityHash({issuer,subject}),client=await pool.connect(),roleSql=quoteIdentifier(role);
+  const identityHash=issuer===null?null:publisherIdentityHash({issuer,subject}),client=await pool.connect(),roleSql=quoteIdentifier(role);
   try{
     await client.query('BEGIN');
     await client.query("SELECT pg_advisory_xact_lock(hashtextextended('ask-bill:publisher-bootstrap',0))");
@@ -44,9 +51,11 @@ export async function bootstrapPublisher({pool,settings}={}){
     await client.query("INSERT INTO ask_bill.publisher_memberships(publisher_id,user_id,role) VALUES($1,$2,'owner') ON CONFLICT(publisher_id,user_id) DO NOTHING",[publisherId,userId]);
     const member=await client.query('SELECT role FROM ask_bill.publisher_memberships WHERE publisher_id=$1 AND user_id=$2',[publisherId,userId]);
     if(member.rows[0]?.role!=='owner')throw Error('EXISTING_MEMBERSHIP_MISMATCH');
-    await client.query('INSERT INTO ask_bill.publisher_auth_identities(publisher_id,identity_sha256,user_id) VALUES($1,$2,$3) ON CONFLICT(publisher_id,identity_sha256) DO NOTHING',[publisherId,identityHash,userId]);
-    const identity=await client.query('SELECT user_id,disabled_at FROM ask_bill.publisher_auth_identities WHERE publisher_id=$1 AND identity_sha256=$2',[publisherId,identityHash]);
-    if(identity.rows[0]?.user_id!==userId||identity.rows[0]?.disabled_at)throw Error('EXISTING_IDENTITY_MISMATCH');
+    if(identityHash!==null){
+      await client.query('INSERT INTO ask_bill.publisher_auth_identities(publisher_id,identity_sha256,user_id) VALUES($1,$2,$3) ON CONFLICT(publisher_id,identity_sha256) DO NOTHING',[publisherId,identityHash,userId]);
+      const identity=await client.query('SELECT user_id,disabled_at FROM ask_bill.publisher_auth_identities WHERE publisher_id=$1 AND identity_sha256=$2',[publisherId,identityHash]);
+      if(identity.rows[0]?.user_id!==userId||identity.rows[0]?.disabled_at)throw Error('EXISTING_IDENTITY_MISMATCH');
+    }
     await client.query('GRANT USAGE ON SCHEMA ask_bill TO '+roleSql);
     await client.query('GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA ask_bill TO '+roleSql);
     await client.query('GRANT USAGE,SELECT ON ALL SEQUENCES IN SCHEMA ask_bill TO '+roleSql);
@@ -55,7 +64,7 @@ export async function bootstrapPublisher({pool,settings}={}){
     await client.query('REVOKE UPDATE,DELETE ON ask_bill.audit_events FROM '+roleSql);
     await assertApplicationDatabaseRole(client,{roleName:role});
     await client.query('COMMIT');
-    return {publisherId,userId,runtimeRole:role,identityEnrolled:true};
+    return {publisherId,userId,runtimeRole:role,identityEnrolled:identityHash!==null};
   }catch(error){try{await client.query('ROLLBACK');}catch{}throw error;}finally{client.release();}
 }
 async function main(){
