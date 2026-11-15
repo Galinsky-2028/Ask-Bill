@@ -2,12 +2,123 @@
   "schema": 1,
   "description": "Aggregate alert rules evaluated against /health/metrics snapshots (AB-103). No rule uses question text, audio, IPs or identities.",
   "rules": [
-    {"id": "reader-5xx", "kind": "error_rate", "routes": ["reader", "info"], "minRequests": 20, "maxRatio": 0.02, "severity": "page", "summary": "Public reader is returning server errors"},
-    {"id": "api-5xx", "kind": "error_rate", "routes": ["api"], "minRequests": 20, "maxRatio": 0.05, "severity": "page", "summary": "Conversation/session API is returning server errors"},
-    {"id": "publisher-5xx", "kind": "error_rate", "routes": ["publisher"], "minRequests": 5, "maxRatio": 0.1, "severity": "ticket", "summary": "Publisher workflow is returning server errors"},
-    {"id": "reader-slow", "kind": "slow_ratio", "routes": ["reader"], "thresholdMs": 1000, "minRequests": 20, "maxRatio": 0.1, "severity": "ticket", "summary": "More than 10% of reader pages take over 1 s"},
-    {"id": "readiness", "kind": "event_count", "event": "readiness_failed", "maxCount": 0, "severity": "page", "summary": "Database readiness probe failed"},
-    {"id": "provider-failures", "kind": "event_count", "event": "provider_failure", "maxCount": 10, "severity": "ticket", "summary": "AI provider failures exceed budget since start"},
-    {"id": "quota", "kind": "event_count", "event": "quota_exceeded", "maxCount": 200, "severity": "info", "summary": "Session or daily quota ceiling reached repeatedly"}
+    {
+      "id": "reader-5xx",
+      "kind": "error_rate",
+      "routes": [
+        "reader",
+        "info"
+      ],
+      "minRequests": 20,
+      "maxRatio": 0.02,
+      "severity": "page",
+      "summary": "Public reader is returning server errors"
+    },
+    {
+      "id": "api-5xx",
+      "kind": "error_rate",
+      "routes": [
+        "api"
+      ],
+      "minRequests": 20,
+      "maxRatio": 0.05,
+      "severity": "page",
+      "summary": "Conversation/session API is returning server errors"
+    },
+    {
+      "id": "publisher-5xx",
+      "kind": "error_rate",
+      "routes": [
+        "publisher"
+      ],
+      "minRequests": 5,
+      "maxRatio": 0.1,
+      "severity": "ticket",
+      "summary": "Publisher workflow is returning server errors"
+    },
+    {
+      "id": "reader-slow",
+      "kind": "slow_ratio",
+      "routes": [
+        "reader"
+      ],
+      "thresholdMs": 1000,
+      "minRequests": 20,
+      "maxRatio": 0.1,
+      "severity": "ticket",
+      "summary": "More than 10% of reader pages take over 1 s"
+    },
+    {
+      "id": "readiness",
+      "kind": "event_count",
+      "event": "readiness_failed",
+      "maxCount": 0,
+      "severity": "page",
+      "summary": "Database readiness probe failed"
+    },
+    {
+      "id": "provider-failures",
+      "kind": "event_count",
+      "event": "provider_failure",
+      "maxCount": 10,
+      "severity": "ticket",
+      "summary": "AI provider failures exceed budget since start"
+    },
+    {
+      "id": "quota",
+      "kind": "event_count",
+      "event": "quota_exceeded",
+      "maxCount": 200,
+      "severity": "info",
+      "summary": "Session or daily quota ceiling reached repeatedly"
+    },
+    {
+      "id": "jobs-dead",
+      "kind": "gauge_max",
+      "path": "diagnostics.jobs.dead",
+      "max": 0,
+      "severity": "ticket",
+      "summary": "Source jobs were dead-lettered"
+    },
+    {
+      "id": "jobs-stalled",
+      "kind": "gauge_max",
+      "path": "diagnostics.jobs.oldestReadySeconds",
+      "max": 900,
+      "severity": "page",
+      "summary": "Ready source jobs waited over 15 minutes (worker down or stalled)"
+    },
+    {
+      "id": "leases-expired",
+      "kind": "gauge_max",
+      "path": "diagnostics.jobs.expiredLeases",
+      "max": 0,
+      "severity": "ticket",
+      "summary": "A worker lease expired without completion"
+    },
+    {
+      "id": "outbox-backlog",
+      "kind": "gauge_max",
+      "path": "diagnostics.outbox.oldestPendingSeconds",
+      "max": 3600,
+      "severity": "info",
+      "summary": "Outbox events pending over 1 hour (no delivery sink configured)"
+    },
+    {
+      "id": "retention-backlog",
+      "kind": "gauge_max",
+      "path": "diagnostics.retention.expiredSessions",
+      "max": 1000,
+      "severity": "ticket",
+      "summary": "Expired anonymous sessions are not being cleaned up"
+    },
+    {
+      "id": "diagnostics-unavailable",
+      "kind": "gauge_max",
+      "path": "diagnostics.unavailableCount",
+      "max": 0,
+      "severity": "ticket",
+      "summary": "Database diagnostics query failed"
+    }
   ]
 }

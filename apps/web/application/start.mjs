@@ -14,6 +14,7 @@ import {createPostgresAuthStore} from '../../../packages/auth/pg-store.mjs';
 import {createCongressClient} from '../../../packages/content/connectors/congress/index.mjs';
 import {createPublisherHandler} from '../admin/server/index.mjs';
 import {createAskBillApplication} from './server.mjs';
+import {collectDiagnostics} from '../../../packages/telemetry/diagnostics.mjs';
 import {demoPack,demoPublisherId} from './demo.mjs';
 
 export async function buildApplicationRuntime({env=process.env,demo=false}={}){
@@ -86,7 +87,8 @@ export async function buildApplicationRuntime({env=process.env,demo=false}={}){
       try{await pool.query('SELECT 1');return true;}catch{return false;}
     };
     const server=await createAskBillApplication({...config,sessions,lookupPublishedPack,lookupPublishedCatalog,provider,reviewer,speech,transcription,
-      authorizeSpeechSegment,publisherHandler,readiness,metricsToken:env.ASK_BILL_METRICS_TOKEN??null});
+      authorizeSpeechSegment,publisherHandler,readiness,metricsToken:env.ASK_BILL_METRICS_TOKEN??null,
+      diagnostics:pool?()=>collectDiagnostics(pool,config.publisherId):null});
     cleanupTimer=setInterval(()=>{sessions.cleanup().catch(()=>{});},60000);cleanupTimer.unref();
     return {server,config,async close(){
       if(closing)return;closing=true;clearInterval(cleanupTimer);server.beginReaderDrain();

@@ -1,0 +1,42 @@
+name: Ask Bill staging alert check
+
+# Aggregate-only alert check against the hosted staging service (AB-103).
+# Every 6 hours: each check wakes the free web service, whose instance hours are shared.
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ops-alerts
+  cancel-in-progress: false
+
+jobs:
+  check:
+    name: ops / staging alert check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      ASK_BILL_ALERT_TARGET: https://ask-bill.onrender.com
+      ASK_BILL_METRICS_TOKEN: ${{ secrets.ASK_BILL_METRICS_TOKEN }}
+      ASK_BILL_ALERT_WEBHOOK_URL: ${{ secrets.ASK_BILL_ALERT_WEBHOOK_URL }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+      - name: Skip when no metrics token is configured
+        id: gate
+        run: |
+          if [ -z "$ASK_BILL_METRICS_TOKEN" ]; then echo "::notice::ASK_BILL_METRICS_TOKEN secret not set; alert check skipped"; echo "run=false" >> "$GITHUB_OUTPUT"; else echo "run=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Wake the free-plan service (cold start)
+        if: steps.gate.outputs.run == 'true'
+        run: curl -sS -o /dev/null --retry 6 --retry-delay 10 --retry-all-errors --max-time 60 "$ASK_BILL_ALERT_TARGET/health/live" || true
+      - name: Evaluate alert rules and deliver
+        if: steps.gate.outputs.run == 'true'
+        run: node scripts/ops/check-alerts.mjs
