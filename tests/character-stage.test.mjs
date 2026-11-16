@@ -75,7 +75,7 @@ test('server exposes the stage only when enabled and serves rewritten same-origi
     await new Promise(resolve=>runtime.server.listen(0,'127.0.0.1',resolve));
     const base='http://127.0.0.1:'+runtime.server.address().port;
     try{
-      assert.deepEqual(await (await fetch(base+'/experience/character.json')).json(),enabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',status:'candidate-not-approved'}:{enabled:false});
+      assert.deepEqual(await (await fetch(base+'/experience/character.json')).json(),enabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',backend:'auto',follow:true,status:'candidate-not-approved'}:{enabled:false});
       const glb=await fetch(base+'/experience/assets/bill.glb');
       assert.equal(glb.status,enabled?200:404);
       if(enabled){
@@ -83,8 +83,56 @@ test('server exposes the stage only when enabled and serves rewritten same-origi
         assert.equal(Buffer.from(await glb.arrayBuffer()).subarray(0,4).toString(),'glTF');
         const loader=await (await fetch(base+'/vendor/three/loaders/GLTFLoader.js')).text();
         assert(!loader.includes("from 'three'"));assert(loader.includes("from '/vendor/three/three.module.min.js'"));
+        const gpuLoader=await (await fetch(base+'/vendor/three-webgpu/loaders/GLTFLoader.js')).text();
+        assert(gpuLoader.includes("from '/vendor/three/three.webgpu.min.js'"));
+        assert.equal((await fetch(base+'/vendor/three/three.webgpu.min.js')).status,200);
       }else assert.equal((await fetch(base+'/vendor/three/three.module.min.js')).status,404);
       assert.equal((await fetch(base+'/experience/character-stage.mjs')).status,200);
     }finally{await runtime.close();}
   }
+});
+
+import {normalizeWeights,createBlinkScheduler,stepGaze,createTalkVisemes,seededRandom,VISEMES} from '../packages/character/animation/face.mjs';
+import {chooseDock,DOCK_SIZE} from '../packages/character/renderer/follow.mjs';
+import {pickBackend} from '../packages/character/renderer/stage.mjs';
+
+test('viseme weights are clamped and never sum above one',()=>{
+  const w=normalizeWeights({a:0.9,b:0.8,c:-1,d:NaN});
+  assert.equal(w.c,0);assert.equal(w.d,0);assert(Math.abs(Object.values(w).reduce((x,y)=>x+y,0)-1)<1e-9);
+  assert.deepEqual(normalizeWeights({a:0.2}),{a:0.2});
+});
+
+test('blink scheduler closes and reopens within the blink window and repeats',()=>{
+  const b=createBlinkScheduler({random:seededRandom(7)});let closed=0,maxGap=0,last=0,blinks=0,prev=0;
+  for(let t=0;t<30000;t+=10){const c=b.closure(t);if(c>=0.99)closed++;if(c>0&&prev===0){blinks++;maxGap=Math.max(maxGap,t-last);last=t;}prev=c;assert(c>=0&&c<=1);}
+  assert(blinks>=4&&blinks<=16,String(blinks));assert(maxGap<=6500,String(maxGap));assert(closed>0);
+});
+
+test('gaze follows smoothly and stays bounded',()=>{
+  let g={x:0,y:0};for(let i=0;i<60;i++)g=stepGaze(g,{x:5,y:-5},1/60);
+  assert(g.x>0.9&&g.x<=1&&g.y<-0.9&&g.y>=-1);
+  assert.deepEqual(stepGaze({x:0.5,y:0.5},{x:0,y:0},0),{x:0.5,y:0.5});
+});
+
+test('procedural talk uses only known visemes with bounded total weight',()=>{
+  const talk=createTalkVisemes({random:seededRandom(3)});
+  for(let t=0;t<2000;t+=33){const w=talk.weights(t);for(const k of Object.keys(w))assert(VISEMES.includes(k),k);
+    assert(Object.values(w).reduce((a,b)=>a+b,0)<=1+1e-9);}
+});
+
+test('follow mode docks only into an empty gutter wide enough for the dock',()=>{
+  const need=DOCK_SIZE.width+DOCK_SIZE.margin*2;
+  assert.equal(chooseDock({slotVisible:true,viewportWidth:1920,contentRight:1200}),'inline');
+  assert.equal(chooseDock({slotVisible:false,viewportWidth:1920,contentRight:1200}),'dock');
+  assert.equal(chooseDock({slotVisible:false,viewportWidth:1280,contentRight:1280-need+1}),'inline');
+  assert.equal(chooseDock({slotVisible:false,viewportWidth:1920,contentRight:1200,followEnabled:false}),'inline');
+});
+
+test('backend selection requires a real WebGPU adapter and honours a forced WebGL 2 choice',async()=>{
+  const gpu=adapter=>({navigator:{gpu:{requestAdapter:async()=>adapter}}});
+  assert.equal(await pickBackend({preference:'auto',win:gpu({})}),'webgpu');
+  assert.equal(await pickBackend({preference:'auto',win:gpu(null)}),'webgl2');
+  assert.equal(await pickBackend({preference:'webgl2',win:gpu({})}),'webgl2');
+  assert.equal(await pickBackend({preference:'webgpu',win:{navigator:{}}}),'webgl2');
+  assert.equal(await pickBackend({preference:'bogus',win:{navigator:{gpu:{requestAdapter:async()=>{throw Error('x');}}}}}),'webgl2');
 });

@@ -119,6 +119,14 @@
       "max": 0,
       "severity": "ticket",
       "summary": "Database diagnostics query failed"
+    },
+    {
+      "id": "sources-stale",
+      "kind": "gauge_max",
+      "path": "diagnostics.sources.staleOfficialReleases",
+      "max": 0,
+      "severity": "ticket",
+      "summary": "An active release's official source has not been re-retrieved within the freshness window; re-import or confirm the status before relying on it"
     }
   ]
 }

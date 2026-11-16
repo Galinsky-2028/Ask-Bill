@@ -10,7 +10,9 @@ const url=new URL(raw);if(!['localhost','127.0.0.1','[::1]'].includes(url.hostna
 const pool=await createApplicationPool({connectionString:raw,hosted:false,verifyRole:false,max:1});
 try{
   await test('diagnostics return only numeric counts and ages',async()=>{
-    const d=await collectDiagnostics(pool,randomUUID());
-    for(const group of ['jobs','outbox','retention'])for(const [k,v] of Object.entries(d[group]))assert(Number.isFinite(v)&&v>=0,group+'.'+k);
+    const d=await collectDiagnostics(pool,randomUUID(),{staleAfterHours:24});
+    assert.equal(d.sources.staleAfterHours,24);
+    await assert.rejects(collectDiagnostics(pool,randomUUID(),{staleAfterHours:0}),/DIAGNOSTICS_STALE_HOURS/);
+    for(const group of ['jobs','outbox','retention','sources'])for(const [k,v] of Object.entries(d[group]))assert(Number.isFinite(v)&&v>=0,group+'.'+k);
   });
 }finally{await pool.end();}

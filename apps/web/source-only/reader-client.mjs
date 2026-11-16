@@ -42,6 +42,8 @@ function initializeReader(root){
    $('audio-pause').disabled=snapshot.state!=='playing';
    $('audio-mute').setAttribute('aria-pressed',String(snapshot.muted));
    $('audio-mute').textContent=snapshot.muted?'Unmute':'Mute';
+   // Optional character stage: mouth moves only while verified speech is actually playing.
+   document.dispatchEvent(new CustomEvent('askbill:answer-state',{detail:{phase:snapshot.state==='playing'?'speaking':'idle'}}));
   }
  });
  const isSessionUsable=()=>session&&Date.parse(session.expiresAt)>Date.now();
@@ -212,7 +214,8 @@ function initializeReader(root){
    else if(update.type==='answer.failed')entry.status='failed';
    renderHistory();
    if(update.type==='segment.validated'||update.type==='correction')setStatus(update.type==='correction'?'An earlier passage was corrected. Check the updated source cards.':'A checked passage is ready. You can inspect its source.');
-   if(update.finished)document.dispatchEvent(new CustomEvent('askbill:answer-state',{detail:{phase:'done'}}));
+   if(update.type==='segment.validated'&&entry.segments.length===1)document.dispatchEvent(new CustomEvent('askbill:answer-state',{detail:{phase:'speaking'}}));
+   if(update.finished)document.dispatchEvent(new CustomEvent('askbill:answer-state',{detail:{phase:entry.status==='completed'?(entry.segments.length?'supported':'unsupported'):'done'}}));
    if(update.finished)setStatus(entry.status==='completed'?(entry.segments.length?'Answer complete. Open a source card to check the exact wording.':'No supported answer was available. Try a more specific question or select a passage.'):entry.status==='stopped'?'Answer stopped.':'The answer service could not complete this response. You can still read its verified source cards.');
   }});
   try{
