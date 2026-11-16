@@ -130,10 +130,11 @@ export async function renderPoseSnapshot({win,loadModules,assetUrl,clip,time=0,w
   }finally{renderer.dispose();}
 }
 
-export async function mountCharacterStage({win,container,config,loadModules,registry,onState=()=>{},timeoutMs=20000,seed}){
+export async function mountCharacterStage({win,container,config,loadModules,registry,onState=()=>{},timeoutMs=20000,seed,recorder=null}){
+  const record=event=>{try{recorder?.record(event);}catch{}};
   const env=detectEnvironment(win),choice=chooseStageMode({config,env});
   let state={mode:choice.mode,reason:choice.reason};
-  const report=next=>{state={...state,...next};try{onState(state);}catch{}};
+  const report=next=>{state={...state,...next};record({type:'state',mode:state.mode,reason:state.reason,backend:state.backend});try{onState(state);}catch{}};
   report({});
   const inert={get state(){return state;},focus(){return {action:'none',reason:state.reason};},answer(){},walk(){},attach(){},dispose(){}};
   if(choice.mode!=='3d')return inert;
@@ -188,7 +189,11 @@ export async function mountCharacterStage({win,container,config,loadModules,regi
     focus(detail){
       if(disposed)return {action:'none',reason:'disposed'};
       const rect=container.getBoundingClientRect();
-      const target=resolvePointTarget({registry,focus:detail,stageRect:rect,viewport:{width:win.innerWidth,height:win.innerHeight}});
+      const viewport={width:win.innerWidth,height:win.innerHeight};
+      const target=resolvePointTarget({registry,focus:detail,stageRect:rect,viewport});
+      if(recorder){let anchor=null;try{const p=registry?.resolve({sourceVersionId:detail?.versionId,provisionId:detail?.provisionId});anchor={visible:p.visible,viewportRect:p.viewportRect};}catch{}
+        record({type:'focus',provisionId:detail?.provisionId,versionId:detail?.versionId,stageRect:rect,viewport,anchor,result:target});
+        if(target.action==='point')record({type:'clip',clip:'point'});}
       if(target.action==='point'){
         targetYaw=target.gaze.yaw*0.6;gazeTarget={x:target.gaze.yaw,y:target.gaze.pitch};blink.trigger(elapsed);controller.play('point');
         later(()=>{gazeTarget={x:0,y:0};targetYaw=0;},2500);
@@ -197,7 +202,7 @@ export async function mountCharacterStage({win,container,config,loadModules,regi
     },
     /** Answer lifecycle: thinking → explaining (talk mouth) → nod/shrug → idle. */
     answer(phase){
-      if(disposed)return;
+      if(disposed)return;record({type:'answer',phase});
       if(phase==='answering'){talking=false;controller.play('think');}
       else if(phase==='speaking'){talking=true;controller.play('explain');}
       else if(phase==='supported'){talking=false;controller.play('nod');}
@@ -206,7 +211,7 @@ export async function mountCharacterStage({win,container,config,loadModules,regi
     },
     /** In-place walk toward a side (follow-mode transitions); returns to idle. */
     walk(direction=1,ms=1200){
-      if(disposed)return;targetYaw=Math.sign(direction)*0.9;controller.play('walk');
+      if(disposed)return;targetYaw=Math.sign(direction)*0.9;controller.play('walk');record({type:'clip',clip:'walk'});
       later(()=>{if(!disposed){targetYaw=0;controller.cancel();}},ms);
     },
     /** Move the live canvas into another container (inline slot or dock) and resize. */

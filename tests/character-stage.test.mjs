@@ -75,7 +75,7 @@ test('server exposes the stage only when enabled and serves rewritten same-origi
     await new Promise(resolve=>runtime.server.listen(0,'127.0.0.1',resolve));
     const base='http://127.0.0.1:'+runtime.server.address().port;
     try{
-      assert.deepEqual(await (await fetch(base+'/experience/character.json')).json(),enabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',backend:'auto',follow:true,status:'candidate-not-approved'}:{enabled:false});
+      assert.deepEqual(await (await fetch(base+'/experience/character.json')).json(),enabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',backend:'auto',follow:true,recorder:false,status:'candidate-not-approved'}:{enabled:false});
       const glb=await fetch(base+'/experience/assets/bill.glb');
       assert.equal(glb.status,enabled?200:404);
       if(enabled){

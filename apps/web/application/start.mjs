@@ -91,7 +91,8 @@ export async function buildApplicationRuntime({env=process.env,demo=false}={}){
       diagnostics:pool?()=>collectDiagnostics(pool,config.publisherId,{staleAfterHours:Number(env.ASK_BILL_SOURCE_STALE_HOURS??168)}):null,
       // Candidate 3D stage: off unless explicitly enabled; never affects reading.
       character:{enabled:env.ASK_BILL_CHARACTER_STAGE==='true',assetFile:env.ASK_BILL_CHARACTER_ASSET??'bill-11.glb',
-        backend:env.ASK_BILL_CHARACTER_BACKEND??'auto',follow:env.ASK_BILL_CHARACTER_FOLLOW!=='false'}});
+        backend:env.ASK_BILL_CHARACTER_BACKEND??'auto',follow:env.ASK_BILL_CHARACTER_FOLLOW!=='false',
+        recorder:env.ASK_BILL_CHARACTER_RECORDER==='true'}});
     cleanupTimer=setInterval(()=>{sessions.cleanup().catch(()=>{});},60000);cleanupTimer.unref();
     return {server,config,async close(){
       if(closing)return;closing=true;clearInterval(cleanupTimer);server.beginReaderDrain();

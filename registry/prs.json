@@ -3092,7 +3092,9 @@
       "id": "AB-076",
       "title": "Performance replay recorder and choreography tools",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        122
+      ],
       "contributingPrs": [],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -3116,7 +3118,7 @@
         "Record and replay a fixed route, alter a layout hash and verify mismatches are rejected explicitly."
       ],
       "rollback": "Disable recording and retain deterministic fixture replays.",
-      "implementationStatus": "not_started",
+      "implementationStatus": "in_progress",
       "operationalAcceptance": "not_run",
       "phase": "F5",
       "gate": "G5",

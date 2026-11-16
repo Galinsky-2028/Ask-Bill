@@ -4,6 +4,7 @@
 import {mountCharacterStage} from '/browser/packages/character/renderer/stage.mjs';
 import {chooseDock,DOCK_SIZE} from '/browser/packages/character/renderer/follow.mjs';
 import {createLayoutAnchorRegistry} from '/browser/packages/character/layout/registry.mjs';
+import {createPerformanceRecorder,layoutHash} from '/browser/packages/character/performance/recorder.mjs';
 
 const reader=document.querySelector('[data-reader]'),documentRoot=document.getElementById('bill-document');
 if(reader&&documentRoot)start().catch(()=>{});
@@ -35,7 +36,25 @@ async function start(){
   document.body.append(dock);
   let registry=null;
   try{registry=createLayoutAnchorRegistry({root:documentRoot,versionId:reader.dataset.versionId});registry.collect();}catch{}
-  const stage=await mountCharacterStage({win:window,container,config,registry,loadModules,
+  // Development-only performance recorder (AB-076): server flag, IDs/geometry/cues only, never conversation text.
+  let recorder=null;
+  const currentLayout=async()=>{const snap=registry.measure();
+    return layoutHash({versionId:reader.dataset.versionId,anchors:snap.anchors,viewport:{width:innerWidth,height:innerHeight}});};
+  if(config.recorder===true&&registry){
+    try{
+      recorder=createPerformanceRecorder({versionId:reader.dataset.versionId,layout:await currentLayout()});
+      const download=document.createElement('button');download.type='button';download.className='bill-stage-hide';
+      download.textContent='Download performance trace (no conversation text)';
+      download.addEventListener('click',()=>{
+        const url=URL.createObjectURL(new Blob([JSON.stringify(recorder.recording(),null,1)],{type:'application/json'}));
+        const a=document.createElement('a');a.href=url;a.download='ask-bill-performance-'+Date.now()+'.json';a.click();
+        setTimeout(()=>URL.revokeObjectURL(url),1000);
+      });
+      shell.append(download);
+      let pending=0;addEventListener('resize',()=>{clearTimeout(pending);pending=setTimeout(async()=>{try{recorder.relayout(await currentLayout());}catch{}},250);});
+    }catch{recorder=null;}
+  }
+  const stage=await mountCharacterStage({win:window,container,config,registry,loadModules,recorder,
     onState:state=>{shell.hidden=state.mode!=='3d'||state.reason!=='ready';shell.dataset.state=state.mode+':'+state.reason;
       if(state.backend)shell.dataset.backend=state.backend;}});
   let place='inline',observer=null;
@@ -43,7 +62,7 @@ async function start(){
   const relocate=slotVisible=>{
     const next=chooseDock({slotVisible,viewportWidth:window.innerWidth,contentRight:contentRight(),followEnabled:config.follow!==false});
     if(next===place||shell.dataset.state!=='3d:ready')return;
-    place=next;
+    place=next;recorder?.record({type:'place',place:next});
     if(next==='dock'){dock.hidden=false;stage.attach(dock,DOCK_SIZE);}else{stage.attach(container,{width:220,height:260});dock.hidden=true;}
     stage.walk(next==='dock'?1:-1);
   };
