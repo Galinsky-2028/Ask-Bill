@@ -4,7 +4,7 @@
   "roadmapVersion": 1,
   "planVerified": true,
   "plannedPrCount": 112,
-  "observedAt": "2026-11-15T19:07:17Z",
+  "observedAt": "2026-11-16T19:47:29Z",
   "approval": {
     "basis": "Owner explicitly directed the complete Ask Bill architecture and PR plan (16 October 2026) and installation of foundational commit.",
     "source": "docs/DEVELOPMENT_PLAN.md"
@@ -2446,7 +2446,9 @@
       "title": "Golden performance and visual regression baseline",
       "origin": "original",
       "prs": [],
-      "contributingPrs": [],
+      "contributingPrs": [
+        120
+      ],
       "priorEvidencePrs": [],
       "dependsOn": [
         "AB-053",
@@ -2564,7 +2566,9 @@
       "id": "AB-063",
       "title": "Isolated Three renderer and backend parity",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        120
+      ],
       "contributingPrs": [
         118
       ],
@@ -2605,7 +2609,8 @@
       "origin": "original",
       "prs": [],
       "contributingPrs": [
-        118
+        118,
+        120
       ],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -2923,7 +2928,9 @@
       "prs": [
         37
       ],
-      "contributingPrs": [],
+      "contributingPrs": [
+        120
+      ],
       "priorEvidencePrs": [],
       "dependsOn": [
         "AB-036",
@@ -3381,7 +3388,9 @@
       "prs": [
         92
       ],
-      "contributingPrs": [],
+      "contributingPrs": [
+        120
+      ],
       "priorEvidencePrs": [],
       "dependsOn": [
         "AB-051",
@@ -4283,7 +4292,9 @@
         110,
         116
       ],
-      "contributingPrs": [],
+      "contributingPrs": [
+        120
+      ],
       "priorEvidencePrs": [],
       "dependsOn": [
         "AB-011",
@@ -6116,6 +6127,30 @@
       "updatedAt": "2026-11-15T19:07:00Z",
       "mergedAt": "2026-11-15T19:07:00Z",
       "closedAt": "2026-11-15T19:07:00Z",
+      "draft": false
+    },
+    {
+      "id": 5326124937,
+      "number": 119,
+      "title": "AB-108: Refresh registry mappings and session status after PRs #113-#118",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/119",
+      "createdAt": "2026-11-15T19:07:37Z",
+      "updatedAt": "2026-11-15T19:09:36Z",
+      "mergedAt": "2026-11-15T19:09:36Z",
+      "closedAt": "2026-11-15T19:09:36Z",
+      "draft": false
+    },
+    {
+      "id": 5343828816,
+      "number": 120,
+      "title": "AB-063: WebGPU stage, facial layers, follow mode, golden poses and source freshness",
+      "state": "closed",
+      "url": "https://github.com/Galinsky-2028/Ask-Bill/pull/120",
+      "createdAt": "2026-11-16T19:42:49Z",
+      "updatedAt": "2026-11-16T19:45:58Z",
+      "mergedAt": "2026-11-16T19:45:58Z",
+      "closedAt": "2026-11-16T19:45:58Z",
       "draft": false
     }
   ]
