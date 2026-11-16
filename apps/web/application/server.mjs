@@ -18,7 +18,8 @@ const modules=new Map([
   ['/browser/packages/character/attention/targets.mjs','../../../packages/character/attention/targets.mjs'],
   ['/browser/packages/character/layout/registry.mjs','../../../packages/character/layout/registry.mjs'],
   ['/browser/packages/character/renderer/follow.mjs','../../../packages/character/renderer/follow.mjs'],
-  ['/browser/packages/character/animation/face.mjs','../../../packages/character/animation/face.mjs']
+  ['/browser/packages/character/animation/face.mjs','../../../packages/character/animation/face.mjs'],
+  ['/browser/packages/character/performance/recorder.mjs','../../../packages/character/performance/recorder.mjs']
 ]);
 // three.js is served same-origin (CSP script-src 'self'); its bare 'three' imports are rewritten.
 const vendor=new Map([
@@ -55,7 +56,7 @@ export async function createAskBillApplication({publisherId,origin,stage='produc
       staticFiles.set(path,Buffer.from(source.replaceAll("from 'three'","from '"+core+"'")));
     }
   }
-  const characterConfig=Buffer.from(JSON.stringify(characterEnabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',backend:character.backend??'auto',follow:character.follow!==false,status:'candidate-not-approved'}:{enabled:false}));
+  const characterConfig=Buffer.from(JSON.stringify(characterEnabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',backend:character.backend??'auto',follow:character.follow!==false,recorder:character.recorder===true,status:'candidate-not-approved'}:{enabled:false}));
   let characterAsset=null;
   const server=await createPublishedSourceServer({publisherId,lookupPublishedPack,lookupPublishedCatalog,interactive:true,
     requestHandler:async(req,res)=>{
