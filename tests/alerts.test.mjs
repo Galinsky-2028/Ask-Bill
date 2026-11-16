@@ -7,13 +7,16 @@ import {alertSettings,checkAlerts} from '../scripts/ops/check-alerts.mjs';
 const rules=JSON.parse(await readFile(new URL('../infra/alerts/rules.json',import.meta.url),'utf8')).rules;
 const token='t'.repeat(40);
 const healthy={requests:{},latencyMs:{},events:{},uptimeSeconds:5,
-  diagnostics:{jobs:{waiting:0,leased:0,expiredLeases:0,dead:0,oldestReadySeconds:0},outbox:{pending:0,failed:0,oldestPendingSeconds:0},retention:{expiredSessions:0}}};
+  diagnostics:{jobs:{waiting:0,leased:0,expiredLeases:0,dead:0,oldestReadySeconds:0},outbox:{pending:0,failed:0,oldestPendingSeconds:0},retention:{expiredSessions:0},
+    sources:{activeReleases:2,officialReleases:1,staleOfficialReleases:0,oldestOfficialRetrievalHours:20,staleAfterHours:168}}};
 
 test('gauge rules fire on dead jobs, stalled queues and diagnostics failure only',()=>{
   assert.deepEqual(evaluateAlerts(healthy,rules),[]);
   const bad=structuredClone(healthy);bad.diagnostics.jobs.dead=2;bad.diagnostics.jobs.oldestReadySeconds=1200;
   assert.deepEqual(evaluateAlerts(bad,rules).map(a=>a.id).sort(),['jobs-dead','jobs-stalled']);
   assert.deepEqual(evaluateAlerts({...healthy,diagnostics:{unavailableCount:1}},rules).map(a=>a.id),['diagnostics-unavailable']);
+  const stale=structuredClone(healthy);stale.diagnostics.sources.staleOfficialReleases=1;
+  assert.deepEqual(evaluateAlerts(stale,rules).map(a=>a.id),['sources-stale']);
 });
 
 test('settings require an https target and a long token; webhook must be https',()=>{

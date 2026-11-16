@@ -164,4 +164,8 @@
 .bill-stage-hide:focus-visible{outline:3px solid #135baa;outline-offset:2px}
 @media(max-width:600px){.bill-stage-canvas canvas{width:154px;height:182px}}
 @media(prefers-reduced-motion:reduce){.bill-stage{display:none}}
-@media print{.bill-stage{display:none}}
+.bill-stage-dock{position:fixed;right:12px;bottom:12px;width:150px;height:176px;pointer-events:none;z-index:4}
+.bill-stage-dock[hidden]{display:none}
+.bill-stage-dock canvas{display:block;width:150px;height:176px}
+@media print{.bill-stage,.bill-stage-dock{display:none}}
+@media(prefers-reduced-motion:reduce){.bill-stage-dock{display:none}}

@@ -16,14 +16,21 @@ const modules=new Map([
   ['/browser/packages/character/renderer/stage.mjs','../../../packages/character/renderer/stage.mjs'],
   ['/browser/packages/character/animation/mixer.mjs','../../../packages/character/animation/mixer.mjs'],
   ['/browser/packages/character/attention/targets.mjs','../../../packages/character/attention/targets.mjs'],
-  ['/browser/packages/character/layout/registry.mjs','../../../packages/character/layout/registry.mjs']
+  ['/browser/packages/character/layout/registry.mjs','../../../packages/character/layout/registry.mjs'],
+  ['/browser/packages/character/renderer/follow.mjs','../../../packages/character/renderer/follow.mjs'],
+  ['/browser/packages/character/animation/face.mjs','../../../packages/character/animation/face.mjs']
 ]);
 // three.js is served same-origin (CSP script-src 'self'); its bare 'three' imports are rewritten.
 const vendor=new Map([
   ['/vendor/three/three.module.min.js','three/build/three.module.min.js'],
   ['/vendor/three/loaders/GLTFLoader.js','three/examples/jsm/loaders/GLTFLoader.js'],
-  ['/vendor/three/utils/BufferGeometryUtils.js','three/examples/jsm/utils/BufferGeometryUtils.js']
+  ['/vendor/three/utils/BufferGeometryUtils.js','three/examples/jsm/utils/BufferGeometryUtils.js'],
+  ['/vendor/three/three.webgpu.min.js','three/build/three.webgpu.min.js'],
+  // WebGPU variant: the loader must share the WebGPU build's classes, so its 'three' import differs.
+  ['/vendor/three-webgpu/loaders/GLTFLoader.js','three/examples/jsm/loaders/GLTFLoader.js'],
+  ['/vendor/three-webgpu/utils/BufferGeometryUtils.js','three/examples/jsm/utils/BufferGeometryUtils.js']
 ]);
+const BACKEND_CHOICES=new Set(['auto','webgpu','webgl2']);
 const CHARACTER_ASSET=/^bill-[0-9]{2}\.glb$/;
 const security={'Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cross-Origin-Resource-Policy':'same-origin'};
 const escape=text=>text.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -41,12 +48,14 @@ export async function createAskBillApplication({publisherId,origin,stage='produc
   const characterEnabled=character?.enabled===true;
   if(characterEnabled){
     if(!CHARACTER_ASSET.test(character.assetFile??''))throw Error('INVALID_CHARACTER_ASSET');
+    if(!BACKEND_CHOICES.has(character.backend??'auto'))throw Error('INVALID_CHARACTER_BACKEND');
     for(const [path,specifier] of vendor){
       const source=await readFile(new URL('../../../node_modules/'+specifier,import.meta.url),'utf8');
-      staticFiles.set(path,Buffer.from(source.replaceAll("from 'three'","from '/vendor/three/three.module.min.js'")));
+      const core=path.startsWith('/vendor/three-webgpu/')?'/vendor/three/three.webgpu.min.js':'/vendor/three/three.module.min.js';
+      staticFiles.set(path,Buffer.from(source.replaceAll("from 'three'","from '"+core+"'")));
     }
   }
-  const characterConfig=Buffer.from(JSON.stringify(characterEnabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',status:'candidate-not-approved'}:{enabled:false}));
+  const characterConfig=Buffer.from(JSON.stringify(characterEnabled?{enabled:true,assetUrl:'/experience/assets/bill.glb',backend:character.backend??'auto',follow:character.follow!==false,status:'candidate-not-approved'}:{enabled:false}));
   let characterAsset=null;
   const server=await createPublishedSourceServer({publisherId,lookupPublishedPack,lookupPublishedCatalog,interactive:true,
     requestHandler:async(req,res)=>{

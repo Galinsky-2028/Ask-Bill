@@ -5,8 +5,8 @@
  * rather than throwing, so an incomplete candidate asset never breaks the stage.
  */
 export const SEMANTIC_CLIPS=Object.freeze({idle:'Idle',talk:'Talk',point:'Point',wave:'Wave',walk:'WalkFunny',
-  celebrate:'Celebrate',look:'Look',laugh:'Laugh'});
-const ONE_SHOT=new Set(['point','wave','celebrate','laugh','look']);
+  celebrate:'Celebrate',look:'Look',laugh:'Laugh',think:'Think',explain:'Explain',shrug:'Shrug',greet:'Greet',nod:'Nod',curious:'Curious'});
+const ONE_SHOT=new Set(['point','wave','celebrate','laugh','look','shrug','greet','nod','curious']);
 export const LOOP_ONCE=2200,LOOP_REPEAT=2201; // three.js LoopOnce / LoopRepeat
 
 export function createClipController({actions,fadeSeconds=0.25}={}){
