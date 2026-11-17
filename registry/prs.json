@@ -308,7 +308,9 @@
       "title": "Publisher authentication roles and MFA",
       "origin": "original",
       "prs": [
-        8
+        8,
+        123,
+        124
       ],
       "contributingPrs": [
         100,
@@ -355,7 +357,9 @@
       ],
       "contributingPrs": [
         100,
-        101
+        101,
+        123,
+        124
       ],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -567,7 +571,9 @@
         14
       ],
       "contributingPrs": [
-        101
+        101,
+        123,
+        124
       ],
       "priorEvidencePrs": [],
       "dependsOn": [
@@ -4385,7 +4391,9 @@
         108
       ],
       "contributingPrs": [
-        101
+        101,
+        123,
+        124
       ],
       "priorEvidencePrs": [],
       "dependsOn": [
