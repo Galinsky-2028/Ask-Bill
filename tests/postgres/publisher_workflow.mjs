@@ -49,7 +49,10 @@ test('durable publisher intake, exact release, corrections, and lease fences wit
       GRANT SELECT,INSERT,UPDATE,DELETE ON ALL TABLES IN SCHEMA ask_bill TO ask_bill_workflow_test;
       GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA ask_bill TO ask_bill_workflow_test;
       REVOKE INSERT,UPDATE,DELETE ON ask_bill.publishers,ask_bill.publisher_memberships,ask_bill.publisher_auth_identities FROM ask_bill_workflow_test;
-      REVOKE UPDATE,DELETE ON ask_bill.audit_events FROM ask_bill_workflow_test`);
+      REVOKE UPDATE,DELETE ON ask_bill.audit_events FROM ask_bill_workflow_test;
+      REVOKE INSERT,UPDATE,DELETE ON ask_bill.publisher_enrollment_invites,ask_bill.publisher_passkeys FROM ask_bill_workflow_test;
+      GRANT UPDATE(sign_count,last_used_at) ON ask_bill.publisher_passkeys TO ask_bill_workflow_test;
+      REVOKE UPDATE ON ask_bill.private_objects FROM ask_bill_workflow_test`);
     await admin.query(`INSERT INTO ask_bill.publishers(id,slug,display_name) VALUES
       ($1::uuid,'publisher-workflow-test','Publisher workflow test'),($2::uuid,'publisher-workflow-other','Other workflow test') ON CONFLICT(id) DO NOTHING`,[PUB,OTHER]);
     await admin.query(`INSERT INTO ask_bill.publisher_memberships(publisher_id,user_id,role) VALUES($1::uuid,$2::uuid,'owner'),

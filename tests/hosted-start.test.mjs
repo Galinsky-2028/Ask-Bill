@@ -64,3 +64,14 @@ test('hosted start never launches the web process after failed maintenance',asyn
     assert.deepEqual((await readFile(log,'utf8')).trim().split('\n').map(line=>line.split('|')[0]),['scripts/migrate.mjs']);
   });
 });
+
+test('hosted start stores the owner invite digest with the owner connection, then hides it from the web process',async()=>{
+  await withStubNode(async({dir,log})=>{
+    await run('sh',[script],{env:{PATH:dir+':/usr/bin:/bin',ASK_BILL_MIGRATION_DATABASE_URL:'postgresql://owner:secret@db.example.test/askbill',
+      ASK_BILL_OWNER_INVITE_DIGEST:'a'.repeat(64)}});
+    const lines=(await readFile(log,'utf8')).trim().split('\n').map(line=>line.split('|')[0]);
+    assert.deepEqual(lines,['scripts/migrate.mjs','scripts/create-owner-invite.mjs','scripts/migrate.mjs --check','apps/web/application/start.mjs']);
+  });
+  const source=await readFile(script,'utf8');
+  assert.match(source,/-u ASK_BILL_OWNER_INVITE_DIGEST/);
+});

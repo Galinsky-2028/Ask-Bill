@@ -5,7 +5,7 @@ import {AuthError} from '../../../../packages/auth/server.mjs';
 import {scanQuarantinedBytes} from '../../../../packages/content/intake/index.mjs';
 import {prepareExtractionCorrection} from '../../../../packages/content/audit/index.mjs';
 import {congressBillIdentity} from '../../../../packages/content/connectors/congress/index.mjs';
-import {renderPublisherLogin,renderPublisherCatalog,renderPublisherBill,renderPublisherVersion,renderPublisherError,REVIEW_CHECKS} from '../views/index.mjs';
+import {renderPublisherLogin,renderPublisherCatalog,renderPublisherBill,renderPublisherVersion,renderPublisherError,renderPasskeySignIn,renderPasskeyEnroll,REVIEW_CHECKS} from '../views/index.mjs';
 const UUID=/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i;
 const HEX=/^[a-f0-9]{64}$/;
 const MAX_UPLOAD=25*1024*1024;
@@ -14,9 +14,11 @@ const ORIGINAL_EXTENSIONS=Object.freeze({'text/plain':'txt','text/markdown':'md'
 const fail=code=>{const error=new Error(code);error.code=code;throw error;};
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const isObject=value=>value&&typeof value==='object'&&!Array.isArray(value);
-const statuses={TOUR_SOURCE_INVALID:409,ORIGIN_FORBIDDEN:403,CSRF_FORBIDDEN:403,ACTION_FORBIDDEN:403,MFA_REQUIRED:403,PUBLISHER_FORBIDDEN:403,MEMBERSHIP_REVOKED:403,UPLOAD_LIMIT:413,REQUEST_TOO_LARGE:413,NOT_FOUND:404,VERSION_CONFLICT:409,QUOTE_MISMATCH:409,QUOTE_AMBIGUOUS:409,METHOD_NOT_ALLOWED:405,AUTH_RATE_LIMITED:429};
+const statuses={FORMAT_REQUIRES_SANDBOXED_WORKER:415,STORAGE_QUOTA_EXCEEDED:507,TOUR_SOURCE_INVALID:409,ORIGIN_FORBIDDEN:403,CSRF_FORBIDDEN:403,ACTION_FORBIDDEN:403,MFA_REQUIRED:403,PUBLISHER_FORBIDDEN:403,MEMBERSHIP_REVOKED:403,UPLOAD_LIMIT:413,REQUEST_TOO_LARGE:413,NOT_FOUND:404,VERSION_CONFLICT:409,QUOTE_MISMATCH:409,QUOTE_AMBIGUOUS:409,METHOD_NOT_ALLOWED:405,AUTH_RATE_LIMITED:429};
 const messages={
  TOUR_SOURCE_INVALID:'The saved tour no longer matches this source. Review and save its selected passages before publishing.',
+ FORMAT_REQUIRES_SANDBOXED_WORKER:'This deployment extracts plain text (.txt) and Markdown (.md) originals. PDF, Word and XML need the sandboxed source worker.',
+ STORAGE_QUOTA_EXCEEDED:'Private source storage is full. Remove unused drafts or raise the storage limit before uploading.',
  MFA_REQUIRED:'A fresh multi-factor sign-in is required for this action. Return to the source page and verify your identity.',
  ACTION_FORBIDDEN:'Your publisher role does not permit this action.',
  ORIGIN_FORBIDDEN:'This request did not come from the publisher website. Open the publisher page and try again.',
@@ -74,18 +76,32 @@ function contentMime(file){
  return {txt:'text/plain',md:'text/markdown',xml:'application/xml',pdf:'application/pdf',docx:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}[extension]??'application/octet-stream';
 }
 
-export function createPublisherHandler({auth,repository,storage,expectedOrigin,publisherId,officialImportsEnabled=false}={}){
+async function jsonBody(req){
+ if(!/^application\/json(?:;|$)/i.test(req.headers['content-type']??''))fail('CONTENT_TYPE_REQUIRED');
+ let value;try{value=JSON.parse((await bytes(req,16384)).toString('utf8'));}catch(error){if(error.code)throw error;fail('REQUEST_INVALID');}
+ if(!isObject(value))fail('REQUEST_INVALID');return value;
+}
+const passkeyErrors={INVITE_INVALID:400,PASSKEY_VERIFICATION_FAILED:401,PUBLISHER_NOT_ENROLLED:401,PASSKEY_CHALLENGE_INVALID:400,SESSION_INVALID:400,
+ ORIGIN_FORBIDDEN:403,AUTH_RATE_LIMITED:429,CONTENT_TYPE_REQUIRED:415,REQUEST_INVALID:400,REQUEST_TOO_LARGE:413,RETURN_PATH_INVALID:400};
+export function createPublisherHandler({auth,repository,storage,expectedOrigin,publisherId,officialImportsEnabled=false,acceptedUploadMimes,
+ allowLoopbackHttpForTests=false}={}){
  let origin;try{origin=new URL(expectedOrigin)}catch{fail('PUBLISHER_CONFIGURATION_INVALID')}
- if(origin.protocol!=='https:'||origin.href!==origin.origin+'/'||!UUID.test(publisherId??'')||typeof officialImportsEnabled!=='boolean')fail('PUBLISHER_CONFIGURATION_INVALID');
+ const loopback=allowLoopbackHttpForTests&&process.env.NODE_ENV==='test'&&origin.protocol==='http:'&&origin.hostname==='localhost';
+ if(acceptedUploadMimes!==undefined&&(!Array.isArray(acceptedUploadMimes)||acceptedUploadMimes.length<1||acceptedUploadMimes.some(m=>typeof m!=='string')))fail('PUBLISHER_CONFIGURATION_INVALID');
+ if((origin.protocol!=='https:'&&!loopback)||origin.href!==origin.origin+'/'||!UUID.test(publisherId??'')||typeof officialImportsEnabled!=='boolean')fail('PUBLISHER_CONFIGURATION_INVALID');
  const publisher=publisherId.toLowerCase(),configured=Boolean(auth&&repository),safeOrigin=origin.origin;
  const css=readFile(new URL('../client/publisher.css',import.meta.url),'utf8');
+ const passkeyScript=readFile(new URL('../client/passkey.mjs',import.meta.url),'utf8');
+ function json(res,status,value,cookies){headers(res);res.statusCode=status;res.setHeader('Content-Type','application/json');if(cookies?.length)res.setHeader('Set-Cookie',cookies);res.end(JSON.stringify(value));return true;}
  async function call(method,input){if(typeof repository?.[method]!=='function')fail('SERVICE_NOT_CONFIGURED');return repository[method](input);}
  function headers(res){
   res.setHeader('Cache-Control','private, no-store, max-age=0');res.setHeader('Pragma','no-cache');
-  res.setHeader('Vary','Cookie');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
+  res.setHeader('Vary','Cookie');res.setHeader('X-Content-Type-Options','nosniff');// same-origin, not no-referrer: with no-referrer browsers send "Origin: null" on form POSTs, which the origin check must reject.
+  res.setHeader('Referrer-Policy','same-origin');
   res.setHeader('X-Frame-Options','DENY');res.setHeader('X-Robots-Tag','noindex, nofollow');
-  res.setHeader('Content-Security-Policy',"default-src 'none'; style-src 'self'; img-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
-  res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=()');
+  // Same-origin scripts only (passkey ceremonies); no inline code, eval or third-party origins.
+  res.setHeader('Content-Security-Policy',"default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'self'; img-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'");
+  res.setHeader('Permissions-Policy','camera=(), microphone=(), geolocation=(), publickey-credentials-get=(self), publickey-credentials-create=(self)');
  }
  function html(req,res,status,body){headers(res);res.statusCode=status;res.setHeader('Content-Type','text/html; charset=utf-8');res.setHeader('Content-Length',Buffer.byteLength(body));res.end(req.method==='HEAD'?undefined:body);return true;}
  function redirect(res,target,cookies){headers(res);res.statusCode=303;res.setHeader('Location',target);if(cookies?.length)res.setHeader('Set-Cookie',cookies);res.end();return true;}
@@ -107,7 +123,38 @@ export function createPublisherHandler({auth,repository,storage,expectedOrigin,p
     if(!['GET','HEAD'].includes(req.method))fail('METHOD_NOT_ALLOWED');
     const source=await css;headers(res);res.setHeader('Content-Type','text/css; charset=utf-8');res.setHeader('Content-Length',Buffer.byteLength(source));res.end(req.method==='HEAD'?undefined:source);return true;
    }
+   if(url.pathname==='/admin/assets/passkey.mjs'){
+    if(!['GET','HEAD'].includes(req.method))fail('METHOD_NOT_ALLOWED');
+    const source=await passkeyScript;headers(res);res.setHeader('Content-Type','text/javascript; charset=utf-8');res.setHeader('Content-Length',Buffer.byteLength(source));res.end(req.method==='HEAD'?undefined:source);return true;
+   }
    if(!configured)return html(req,res,503,renderPublisherLogin({configured:false}));
+   if(auth.kind==='passkey'){
+    if(url.pathname==='/admin/enroll'){
+     if(!['GET','HEAD'].includes(req.method))fail('METHOD_NOT_ALLOWED');return html(req,res,200,renderPasskeyEnroll());
+    }
+    if(url.pathname==='/admin/auth/passkey'){
+     if(!['GET','HEAD'].includes(req.method))fail('METHOD_NOT_ALLOWED');
+     const returnTo=url.searchParams.get('returnTo')??'/admin';
+     if(!/^\/admin(?:\/[A-Za-z0-9_-]+)*\/?$/.test(returnTo)||returnTo.length>1000)fail('REQUEST_INVALID');
+     return html(req,res,200,renderPasskeySignIn({returnTo}));
+    }
+    const ceremonies={'/admin/auth/passkey/options':'loginOptions','/admin/auth/passkey/verify':'finishPasskeyLogin',
+     '/admin/auth/passkey/register/options':'registrationOptions','/admin/auth/passkey/register/verify':'finishRegistration'};
+    if(Object.hasOwn(ceremonies,url.pathname)){
+     try{
+      if(req.method!=='POST')fail('METHOD_NOT_ALLOWED');
+      const body=await jsonBody(req),request={requestOrigin:req.headers.origin,cookieHeader:req.headers.cookie};
+      const method=ceremonies[url.pathname];
+      const input=method==='loginOptions'?{...request,returnTo:typeof body.returnTo==='string'?body.returnTo:'/admin'}:
+       method==='registrationOptions'?{...request,invite:body.invite}:{...request,credential:isObject(body.credential)?body.credential:null};
+      const result=await auth[method](input);
+      return json(res,200,result.options?{options:result.options}:{location:result.location},result.setCookies);
+     }catch(error){
+      const code=typeof error?.code==='string'&&Object.hasOwn(passkeyErrors,error.code)?error.code:'PASSKEY_VERIFICATION_FAILED';
+      return json(res,passkeyErrors[code],{error:code});
+     }
+    }
+   }
    if(url.pathname==='/admin/auth/start'){
     if(req.method!=='POST')fail('METHOD_NOT_ALLOWED');
     const input=await fields(req),requireMfa=input.requireMfa==='true';
@@ -121,7 +168,7 @@ export function createPublisherHandler({auth,repository,storage,expectedOrigin,p
     return redirect(res,result.location,result.setCookies);
    }
    try{context=await auth.getContext({cookieHeader:req.headers.cookie});}
-   catch(error){if(error instanceof AuthError)return html(req,res,401,renderPublisherLogin({error:error.code==='MEMBERSHIP_REVOKED'?'Publisher access has been revoked for this account.':''}));throw error;}
+   catch(error){if(error instanceof AuthError)return html(req,res,401,renderPublisherLogin({authKind:auth.kind,error:error.code==='MEMBERSHIP_REVOKED'?'Publisher access has been revoked for this account.':''}));throw error;}
    if(context.publisherId!==publisher)fail('PUBLISHER_FORBIDDEN');
    if(req.method==='GET'||req.method==='HEAD'){
     const actor=await auth.authorize({cookieHeader:req.headers.cookie,method:req.method,action:'view',publisherId:publisher});
@@ -174,7 +221,9 @@ export function createPublisherHandler({auth,repository,storage,expectedOrigin,p
     const file=input.source;
     if(!file||typeof file.arrayBuffer!=='function'||!Number.isSafeInteger(file.size)||file.size<1||file.size>MAX_UPLOAD)fail('UPLOAD_LIMIT');
     if(!['en','es'].includes(input.language??'en'))fail('REQUEST_INVALID');
-    const content=Buffer.from(await file.arrayBuffer()),mime=contentMime(file),scan=scanQuarantinedBytes(content,mime);
+    const content=Buffer.from(await file.arrayBuffer()),mime=contentMime(file);
+    if(acceptedUploadMimes&&!acceptedUploadMimes.includes(mime))fail('FORMAT_REQUIRES_SANDBOXED_WORKER');
+    const scan=scanQuarantinedBytes(content,mime);
     await storage.putQuarantine({publisherId:publisher,sha256:scan.sha256,mime,content});
     const object=await storage.promoteQuarantine({publisherId:publisher,sha256:scan.sha256,mime});
     if(!object?.objectStoredAndVerified||object.publisherId!==publisher||object.sha256!==scan.sha256||object.bytes!==scan.bytes||object.scope!=='private-source')fail('OBJECT_INTEGRITY_FAILED');
@@ -240,7 +289,7 @@ export function createPublisherHandler({auth,repository,storage,expectedOrigin,p
    const code=typeof error?.code==='string'?error.code:'PUBLISHER_UNAVAILABLE';
    const status=statuses[code]??(code.includes('INVALID')||code.includes('MISMATCH')||code.includes('INCOMPLETE')||code.includes('CONFIRMATION')?400:code.startsWith('OIDC_')||code==='PUBLISHER_NOT_ENROLLED'?401:503);
    const message=messages[code]??(status===400?'The request could not be validated. Check the supplied source and form fields.':'The publisher request is unavailable. Check your current source and try again.');
-   return html(req,res,status,context?renderPublisherError({context,error:message}):renderPublisherLogin({configured,error:message}));
+   return html(req,res,status,context?renderPublisherError({context,error:message}):renderPublisherLogin({configured,authKind:auth?.kind,error:message}));
   }
  };
 }

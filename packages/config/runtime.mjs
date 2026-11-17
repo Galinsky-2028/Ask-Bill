@@ -17,6 +17,13 @@ function list(env,key,fallback,maximum){
   return Object.freeze(values);
 }
 function storageConfig(env){
+  // 'postgres' keeps private originals in the application database (size-capped; no external account).
+  const driver=optional(env,'ASK_BILL_STORAGE_DRIVER',env.ASK_BILL_STORAGE_URL===undefined?'postgres':'s3',20);
+  if(driver==='postgres'){
+    return Object.freeze({driver,maxObjectBytes:integer(env,'ASK_BILL_STORAGE_MAX_OBJECT_BYTES',10485760,1024,26214400),
+      maxTotalBytes:integer(env,'ASK_BILL_STORAGE_MAX_TOTAL_BYTES',209715200,1048576,2147483648)});
+  }
+  if(driver!=='s3')fail('INVALID_ASK_BILL_STORAGE_DRIVER');
   const endpoint=required(env,'ASK_BILL_STORAGE_URL'),url=httpsUrl(endpoint,'INVALID_STORAGE_URL');
   if(url.pathname!=='/')fail('INVALID_STORAGE_URL');
   const bucket=required(env,'ASK_BILL_STORAGE_BUCKET',63),region=optional(env,'ASK_BILL_STORAGE_REGION','auto',40);
@@ -27,7 +34,7 @@ function storageConfig(env){
   if(!/^[A-Za-z0-9]{8,128}$/.test(accessKeyId)||secretAccessKey.length<8||/[\u0000-\u0020\u007f]/.test(secretAccessKey))fail('INVALID_STORAGE_CREDENTIALS');
   const credentials=Object.freeze({accessKeyId,secretAccessKey,
     ...(env.ASK_BILL_STORAGE_SESSION_TOKEN===undefined?{}:{sessionToken:required(env,'ASK_BILL_STORAGE_SESSION_TOKEN',8192)})});
-  return Object.freeze({endpoint,region,bucket,quarantineBucket,sourceBucket,credentials,pathStyle:flag(env,'ASK_BILL_STORAGE_PATH_STYLE',true)});
+  return Object.freeze({driver,endpoint,region,bucket,quarantineBucket,sourceBucket,credentials,pathStyle:flag(env,'ASK_BILL_STORAGE_PATH_STYLE',true)});
 }
 function congressKey(env,enabled){
   if(!enabled)return null;
@@ -71,6 +78,13 @@ export function readApplicationConfig(env=process.env,{component='web'}={}){
     if(parsed.protocol!=='https:')fail('PUBLISHER_HTTPS_REQUIRED');
     if(!databaseUrl||!encryptionKey)fail('DURABLE_PUBLISHER_DATABASE_REQUIRED');
     storage=storageConfig(env);
+    const authKind=optional(env,'ASK_BILL_PUBLISHER_AUTH','oidc',20);
+    if(authKind==='passkey'){
+      // Built-in WebAuthn: relying party is the exact public origin; user verification is mandatory.
+      auth=Object.freeze({kind:'passkey',rpId:parsed.hostname,expectedOrigin:origin,rpName:optional(env,'ASK_BILL_PASSKEY_RP_NAME','Ask Bill publisher',64),publisherId});
+    }else if(authKind!=='oidc')fail('INVALID_ASK_BILL_PUBLISHER_AUTH');
+  }
+  if(publishing&&!auth){
     const issuer=required(env,'ASK_BILL_OIDC_ISSUER');httpsUrl(issuer,'INVALID_OIDC_ISSUER');
     const clientSecret=optional(env,'ASK_BILL_OIDC_CLIENT_SECRET',null);
     const method=optional(env,'ASK_BILL_OIDC_TOKEN_ENDPOINT_AUTH_METHOD',clientSecret?'client_secret_basic':'none',30);
@@ -79,14 +93,17 @@ export function readApplicationConfig(env=process.env,{component='web'}={}){
     const acceptedMfaAmr=list(env,'ASK_BILL_OIDC_MFA_AMR',['mfa'],12);
     const allowedEndpointOrigins=list(env,'ASK_BILL_OIDC_ALLOWED_ENDPOINT_ORIGINS',[new URL(issuer).origin],8);
     allowedEndpointOrigins.forEach(value=>httpsUrl(value,'INVALID_OIDC_ENDPOINT_ORIGIN',{originOnly:true}));
-    auth=Object.freeze({issuer,clientId:required(env,'ASK_BILL_OIDC_CLIENT_ID'),...(clientSecret?{clientSecret}:{}),tokenEndpointAuthMethod:method,
+    auth=Object.freeze({kind:'oidc',issuer,clientId:required(env,'ASK_BILL_OIDC_CLIENT_ID'),...(clientSecret?{clientSecret}:{}),tokenEndpointAuthMethod:method,
       acceptedMfaAcr,acceptedMfaAmr,allowedEndpointOrigins,redirectUri:origin+'/admin/auth/callback',expectedOrigin:origin,publisherId});
   }
   if(officialImportsEnabled&&!publishing)fail('OFFICIAL_IMPORTS_REQUIRE_PUBLISHING');
+  // Text/Markdown-only extraction inside the web service when no sandboxed worker is deployed.
+  const embeddedTextWorker=flag(env,'ASK_BILL_EMBEDDED_TEXT_WORKER');
+  if(embeddedTextWorker&&!publishing)fail('EMBEDDED_WORKER_REQUIRES_PUBLISHING');
   const congressApiKey=congressKey(env,officialImportsEnabled),ffmpegPath=optional(env,'ASK_BILL_FFMPEG_PATH','/usr/bin/ffmpeg',1024);
   if(!isAbsolute(ffmpegPath))fail('INVALID_FFMPEG_PATH');
   return Object.freeze({component,stage,hosted,origin,publisherId,databaseUrl,encryptionKey,providers:Object.freeze(providers),storage,auth,publishing,
     port:integer(env,'PORT',hosted?10000:4100,1,65535),maxInflight:integer(env,'ASK_BILL_MAX_GENERATIONS',25,1,50),
     maxPerSession:integer(env,'ASK_BILL_SESSION_REQUEST_LIMIT',60,1,1000),maxPerDay:integer(env,'ASK_BILL_DAILY_REQUEST_LIMIT',1000,1,100000),
-    officialImportsEnabled,congressApiKey,ffmpegPath,buildSha});
+    officialImportsEnabled,congressApiKey,ffmpegPath,buildSha,embeddedTextWorker});
 }

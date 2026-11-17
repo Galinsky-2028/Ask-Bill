@@ -16,6 +16,9 @@ if [ -n "${ASK_BILL_MIGRATION_DATABASE_URL:-}" ]; then
   if [ -n "${ASK_BILL_OWNER_USER_ID:-}" ]; then
     node scripts/bootstrap-publisher.mjs
   fi
+  if [ -n "${ASK_BILL_OWNER_INVITE_DIGEST:-}" ]; then
+    node scripts/create-owner-invite.mjs
+  fi
   node scripts/migrate.mjs --check
 fi
 
@@ -28,4 +31,6 @@ exec env \
   -u ASK_BILL_OWNER_IDENTITY \
   -u ASK_BILL_PUBLISHER_SLUG \
   -u ASK_BILL_PUBLISHER_NAME \
+  -u ASK_BILL_OWNER_INVITE_DIGEST \
+  -u ASK_BILL_OWNER_INVITE_TTL_HOURS \
   node apps/web/application/start.mjs

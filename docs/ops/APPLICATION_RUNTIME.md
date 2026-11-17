@@ -93,3 +93,25 @@ Database-backed services add `diagnostics` (job queue, dead letters, outbox back
 Additional character settings: `ASK_BILL_CHARACTER_BACKEND` (`auto` default: WebGPU when a real adapter exists, else WebGL 2; `webgl2` forces WebGL 2) and `ASK_BILL_CHARACTER_FOLLOW=false` (disables the gutter dock). Source freshness: `ASK_BILL_SOURCE_STALE_HOURS` (default 168). Active releases whose latest official retrieval is older than this window appear in `diagnostics.sources` and fire the `sources-stale` alert.
 
 Performance recorder (development only): `ASK_BILL_CHARACTER_RECORDER=true` (together with the stage) adds a "Download performance trace (no conversation text)" button. Traces hold the version, a layout hash, anchor/stage geometry, the pointing decision, answer phases, clips and dock moves, rebuilt from an allowlist so no question, answer, quote or audio can enter. Inspect or replay with `node tools/performance/inspect.mjs trace.json [--version <uuid> --layout <sha256>]`. Exit codes: 0 reproduced, 2 decisions diverge from current code, 3 version/layout mismatch, 1 invalid or unredacted.
+
+## Publishing without external accounts (passkeys + PostgreSQL storage)
+
+Publishing can run with **no identity provider, object store or paid worker**:
+
+| Setting | Effect |
+| --- | --- |
+| `ASK_BILL_ALLOW_PUBLISHING=true` | Enables `/admin` |
+| `ASK_BILL_PUBLISHER_AUTH=passkey` | Built-in WebAuthn sign-in instead of OIDC (`oidc` stays the default and fully supported). Relying party = the exact `ASK_BILL_PUBLIC_ORIGIN` host. Every ceremony requires user verification (device biometric/PIN on a possession factor), so each sign-in records MFA; publish/withdraw still demand MFA within 10 minutes, and step-up is another passkey assertion. Discoverable credentials, single-use challenges bound to a `__Host-` cookie, signature-counter clone detection, ES256/EdDSA/RS256 only. |
+| `ASK_BILL_STORAGE_DRIVER=postgres` | Private originals stored in `ask_bill.private_objects` (default when `ASK_BILL_STORAGE_URL` is unset): content-addressed SHA-256, re-verified on every read, immutable once promoted, FORCE RLS. Caps: `ASK_BILL_STORAGE_MAX_OBJECT_BYTES` (default 10 MiB) and `ASK_BILL_STORAGE_MAX_TOTAL_BYTES` (default 200 MiB, sized for the Neon free plan). |
+| `ASK_BILL_EMBEDDED_TEXT_WORKER=true` | The web service also runs the source job loop for **.txt and .md only**. Parsing happens in a separate Node process under the permission model (read-only access to application code, no writes, no child processes, empty environment, 128 MB heap, timeout). PDF, Word and XML are refused at upload until the sandboxed worker (`infra/render-worker.yaml`) is deployed. |
+
+**Enrolment is invite-only.** The runtime database role cannot insert identities, passkeys or invites; enrolment happens only inside `ask_bill.redeem_publisher_invite`, which atomically consumes an unexpired invite created by the owner role. The invite code is generated on the owner's own computer and never sent anywhere except once, typed into `/admin/enroll`.
+
+### Owner steps to enrol the first publisher passkey
+
+1. On your computer (Node 24, repository checkout): `node scripts/new-publisher-invite.mjs`. It prints a private **invite code** and its **digest**. Without Node: `code=$(openssl rand 32 | basenc --base64url | tr -d '=\n'); echo "$code"; printf %s "$code" | sha256sum`.
+2. In the Render service's Environment, add `ASK_BILL_OWNER_INVITE_DIGEST=<digest>` and `ASK_BILL_MIGRATION_DATABASE_URL=<Neon owner connection string>` (Neon console → project *Ask Bill* → Connect → role `neondb_owner`, **direct** connection, not pooled). Save and deploy. Startup runs `scripts/create-owner-invite.mjs` with the owner connection (valid 72 h; `ASK_BILL_OWNER_INVITE_TTL_HOURS` to change) and then starts the web process **without** those values.
+3. Open `https://<public origin>/admin/enroll`, enter the invite code and create the passkey on a device with a biometric or PIN (phone, laptop or security key). You land in the publisher desk with MFA current.
+4. Delete both values from the Render environment and deploy again. The invite is already consumed; repeating step 2 with the same digest has no effect.
+
+To add another device later, generate a new invite and repeat. Lost all passkeys? Generate a new invite the same way; disable a lost passkey's identity as owner (`UPDATE ask_bill.publisher_auth_identities SET disabled_at=now() WHERE identity_sha256=…`).

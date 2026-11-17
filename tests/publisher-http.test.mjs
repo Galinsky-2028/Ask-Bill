@@ -107,7 +107,7 @@ test('publisher catalog and version forms escape source markup and preserve sema
  const f=await setup(t);await f.login();const billId=await f.addBill('<script>alert(1)</script> & public duty'),versionId=await f.upload(billId,'😀 <script>not executable</script> exact law.');
  const catalog=await f.request('/admin'),body=await catalog.text();assert.equal(catalog.status,200);assert.match(body,/&lt;script&gt;alert\(1\)&lt;\/script&gt;/);assert.doesNotMatch(body,/<script>/);
  const page=await f.request('/admin/bills/'+billId+'/versions/'+versionId),html=await page.text();assert.match(html,/&lt;script&gt;not executable/);assert.match(html,/Exact passage to correct/);assert.match(html,/name="checks"/);
- assert.match(page.headers.get('content-security-policy'),/default-src 'none'/);assert.equal(page.headers.get('referrer-policy'),'no-referrer');assert.equal(page.headers.get('x-robots-tag'),'noindex, nofollow');
+ assert.match(page.headers.get('content-security-policy'),/default-src 'none'/);assert.equal(page.headers.get('referrer-policy'),'same-origin');assert.equal(page.headers.get('x-robots-tag'),'noindex, nofollow');
  const css=await f.request('/admin/assets/publisher.css');assert.equal(css.status,200);assert.match(await css.text(),/:focus-visible/);
 });
 test('full owner workflow uploads privately, reviews, publishes, corrects immutably, imports and withdraws',async t=>{
@@ -193,7 +193,7 @@ test('original downloads require current publisher membership, pin exact raw byt
  assert.equal(response.headers.get('x-source-sha256'),hash(source));assert.equal(response.headers.get('content-type'),'text/plain');
  assert.equal(response.headers.get('content-length'),String(Buffer.byteLength(source)));
  assert.match(response.headers.get('cache-control'),/private, no-store/);assert.equal(response.headers.get('x-content-type-options'),'nosniff');
- assert.equal(response.headers.get('referrer-policy'),'no-referrer');
+ assert.equal(response.headers.get('referrer-policy'),'same-origin');
  const head=await f.request(path,{method:'HEAD'});assert.equal(head.status,200);assert.equal(await head.text(),'');assert.equal(head.headers.get('x-source-sha256'),hash(source));
  assert.equal((await f.request(path,{anonymous:true})).status,401);
  assert.equal((await f.request('/admin/bills/'+randomUUID()+'/versions/'+versionId+'/original')).status,404);

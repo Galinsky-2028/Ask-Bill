@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {buildApplicationRuntime} from '../../apps/web/application/start.mjs';
 import {demoPack} from '../../apps/web/application/demo.mjs';
+import {createPublisherSourceExtractor} from '../../packages/db/publisher-source-extraction.mjs';
 const env={NODE_ENV:'test',ASK_BILL_STAGE:'test'};
 const runtime=await buildApplicationRuntime({env,demo:true});
 try{
@@ -19,5 +20,9 @@ try{
     body:JSON.stringify({billId:pack.billId,versionId:pack.versionId,question:'When would the reading room open?',conversationEpoch:1})});
   assert.equal(answer.status,200);assert.match(await answer.text(),/answer\.completed/);
   execFileSync('/usr/bin/ffmpeg',['-version'],{stdio:'ignore'});
-  process.stdout.write('Built image: reader, session, validated conversation, health and FFmpeg smoke passed.\n');
+  // Zero-account publishing: text-only extraction under the Node permission model inside the image.
+  const extract=createPublisherSourceExtractor({textOnlyProcessBoundary:true,timeoutMs:20000});
+  const parsed=await extract({bytes:Buffer.from('Section 1. Short title\n\nThis Act may be cited as the Image Act.\n'),mime:'text/markdown',versionId:pack.versionId});
+  assert.match(parsed.canonicalText,/Image Act/);
+  process.stdout.write('Built image: reader, session, validated conversation, health, FFmpeg and text-only extraction smoke passed.\n');
 }finally{await runtime.close();}

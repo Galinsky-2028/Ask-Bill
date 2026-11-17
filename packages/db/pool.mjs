@@ -50,9 +50,20 @@ export async function assertApplicationDatabaseRole(client,{roleName=null}={}){
         WHERE n.nspname='ask_bill' AND c.relkind IN ('r','p')
           AND pg_catalog.has_table_privilege(r.oid,c.oid,'TRUNCATE')) AS can_truncate,
       EXISTS(SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace,reachable r
-        WHERE n.nspname='ask_bill' AND c.relname IN ('publishers','publisher_memberships','publisher_auth_identities')
+        WHERE n.nspname='ask_bill' AND c.relname IN ('publishers','publisher_memberships','publisher_auth_identities','publisher_enrollment_invites')
           AND (pg_catalog.has_any_column_privilege(r.oid,c.oid,'INSERT,UPDATE')
-            OR pg_catalog.has_table_privilege(r.oid,c.oid,'DELETE,TRUNCATE,TRIGGER'))) AS can_enroll_identity,
+            OR pg_catalog.has_table_privilege(r.oid,c.oid,'DELETE,TRUNCATE,TRIGGER')))
+      -- Passkeys: only the sign counter and last-use time may change at runtime; enrollment goes through
+      -- the invite-redemption function.
+      OR EXISTS(SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace,reachable r
+        WHERE n.nspname='ask_bill' AND c.relname='publisher_passkeys'
+          AND (pg_catalog.has_table_privilege(r.oid,c.oid,'INSERT,DELETE,TRUNCATE,TRIGGER')
+            OR pg_catalog.has_any_column_privilege(r.oid,c.oid,'INSERT')
+            OR pg_catalog.has_column_privilege(r.oid,c.oid,'public_key_spki','UPDATE')
+            OR pg_catalog.has_column_privilege(r.oid,c.oid,'credential_id','UPDATE')
+            OR pg_catalog.has_column_privilege(r.oid,c.oid,'user_id','UPDATE')
+            OR pg_catalog.has_column_privilege(r.oid,c.oid,'identity_sha256','UPDATE')
+            OR pg_catalog.has_column_privilege(r.oid,c.oid,'algorithm','UPDATE'))) AS can_enroll_identity,
       EXISTS(SELECT 1 FROM pg_catalog.pg_class c JOIN pg_catalog.pg_namespace n ON n.oid=c.relnamespace,reachable r
         WHERE n.nspname='ask_bill' AND c.relname='audit_events'
           AND (pg_catalog.has_any_column_privilege(r.oid,c.oid,'UPDATE')
