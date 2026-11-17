@@ -1,6 +1,6 @@
 # Ask Bill — verified development checkpoint
 
-GitHub observation: **2026-11-15T19:07Z**, repository `Galinsky-2028/Ask-Bill` (formerly `neophilism/Ask-Bill`), main `4afaf3ee` (live on Render).
+GitHub observation: **2026-11-15T19:07Z**, repository `Galinsky-2028/Ask-Bill` (formerly `neophilism/Ask-Bill`), main `0f6025a5` (live on Render).
 
 ## Merged in this session (all five required jobs green on each exact head)
 
@@ -18,6 +18,8 @@ GitHub observation: **2026-11-15T19:07Z**, repository `Galinsky-2028/Ask-Bill` (
 | #116 | AB-103 (partial) | Queue/outbox/retention diagnostics, webhook alert delivery, 6-hourly `ops-alerts` workflow |
 | #117 | AB-108 (partial) | `docs/ops/OPERATOR_RUNBOOK.md` with a path-verification test |
 | #118 | AB-063/064/070/077 (partial) | Optional candidate 3D stage (off by default), clip controller, version-safe pointing, contained fallbacks |
+| #122 | AB-076 | Performance recorder, redacted traces, deterministic replay |
+| #123, #124 | AB-008 (+009/014/105) | Zero-account publishing: passkeys, PostgreSQL private storage, text/Markdown embedded extraction; fixed admin `Origin: null` form defect |
 | #120 | AB-063 (+064/072/060 runtime/083/103) | WebGPU with WebGL 2 fallback, blink/gaze/viseme layers, sticky follow and gutter dock, golden-pose and backend-parity regression, source-freshness alert |
 
 Draft PR #105 (AB-048 character topology) remains open and untouched. No art unit (AB-045–AB-062) is claimed. The browser job's scroll-invalidation check (`test_layout_anchor_registry.py`) failed once on #111 and passed on rerun; treat it as flaky.
@@ -40,3 +42,7 @@ Draft PR #105 (AB-048 character topology) remains open and untouched. No art uni
 ## Continue from evidence
 
 Re-query main, open PRs and exact-head CI. Remaining work is now mostly blocked on inputs: production character art (AB-045 to AB-062: mesh, rig with a head/eye skeleton, textures, approved clips), live providers (AI, voice with aligned viseme timing, OIDC, storage, Congress API), a reviewed authoritative corpus, a domain, and the paid worker. Software-only follow-ups: contact-aware walking across the page (AB-069; needs a rig with foot bones), a performance replay recorder (AB-076), translation publication policy, and acceptance gates that require live evidence. Owner inputs: GitHub secret `ASK_BILL_METRICS_TOKEN` (same value as Render), optional `ASK_BILL_ALERT_WEBHOOK_URL`; set `ASK_BILL_CHARACTER_STAGE=true` on Render to preview the candidate stage.
+
+## Publishing on staging (no external accounts)
+
+Staging runs with `ASK_BILL_ALLOW_PUBLISHING=true`, `ASK_BILL_PUBLISHER_AUTH=passkey`, `ASK_BILL_STORAGE_DRIVER=postgres` and `ASK_BILL_EMBEDDED_TEXT_WORKER=true`. Migrations 012 and auth 003 are applied and the runtime role is re-granted. **No passkey is enrolled and no invite exists yet**, so nobody can sign in until the owner completes the enrolment steps in `docs/ops/APPLICATION_RUNTIME.md` ("Owner steps to enrol the first publisher passkey"). No bill content has been published; choosing it is the owner's decision. Uploads accept .txt and .md; PDF, Word and XML need the sandboxed worker.
