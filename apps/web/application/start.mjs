@@ -71,7 +71,7 @@ export async function buildApplicationRuntime({env=process.env,demo=false}={}){
       const normalize=await createRecordingNormalizer({ffmpegPath:config.ffmpegPath});
       transcription=withBoundedRecordings(createOpenAITranscriptionProvider({...common,apiKey:config.providers.sttKey,model:config.providers.sttModel,maxSeconds:30}),normalize);
     }
-    let publisherHandler=null;
+    let publisherHandler=null,embeddedWorker=null;
     if(config.origin.startsWith('https://')){
       let auth,storage,repository;
       if(config.publishing){
@@ -89,12 +89,11 @@ export async function buildApplicationRuntime({env=process.env,demo=false}={}){
         officialImportsEnabled:config.officialImportsEnabled,
         // Without a sandboxed worker only text/Markdown originals can be extracted.
         acceptedUploadMimes:config.embeddedTextWorker?['text/plain','text/markdown']:undefined});
-    }
-    let embeddedWorker=null;
-    if(config.embeddedTextWorker&&storage){
-      const {createWorkerApplication}=await import('../../worker/application.mjs');
-      embeddedWorker=await createWorkerApplication({env,pool,storage,textOnly:true});
-      embeddedWorker.run();
+      if(config.embeddedTextWorker&&storage){
+        const {createWorkerApplication}=await import('../../worker/application.mjs');
+        embeddedWorker=await createWorkerApplication({env,pool,storage,textOnly:true});
+        embeddedWorker.run();
+      }
     }
     let closing=false;
     const readiness=async()=>{

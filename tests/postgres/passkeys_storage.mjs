@@ -26,9 +26,10 @@ try{
   await bootstrapPublisher({pool:owner,settings:bootstrapSettings({ASK_BILL_PUBLISHER_ID:publisherId,ASK_BILL_OWNER_USER_ID:userId,
     ASK_BILL_PUBLISHER_SLUG:'passkey-'+process.pid,ASK_BILL_PUBLISHER_NAME:'Passkey fixture',ASK_BILL_OWNER_IDENTITY:'deferred',
     ASK_BILL_RUNTIME_DB_ROLE:role,ASK_BILL_RUNTIME_DB_PASSWORD:password})});
-  const appUrl=new URL(raw);appUrl.username=role;appUrl.password=password;
+  var appUrl=new URL(raw);appUrl.username=role;appUrl.password=password;
   // verifyRole defaults to true: the runtime role must still pass the non-owner/no-enrolment safety check.
   runtime=await createApplicationPool({connectionString:appUrl.href,hosted:false,max:3});
+
   const invite=newInvite();
 
   await test('owner CLI stores only the invite digest; reruns are idempotent',async()=>{
@@ -97,5 +98,30 @@ try{
       assert.equal((await client.query('SELECT count(*)::int AS n FROM ask_bill.private_objects')).rows[0].n,0,'other publishers see nothing');
     }finally{client.release();}
     assert.deepEqual(await storage.usage(),{objects:2,bytes:content.length+4000,maxTotalBytes:8000});
+  });
+  await test('the hosted web runtime starts with passkeys, PostgreSQL storage and the embedded text worker, and extracts an upload',async()=>{
+    const {buildApplicationRuntime}=await import('../../apps/web/application/start.mjs');
+    const {createPublisherWorkflow}=await import('../../packages/db/publisher-workflow.mjs');
+    const {createHash}=await import('node:crypto');
+    const env={ASK_BILL_STAGE:'development',ASK_BILL_PUBLIC_ORIGIN:ORIGIN,ASK_BILL_PUBLISHER_ID:publisherId,ASK_BILL_DATABASE_URL:appUrl.href,
+      ASK_BILL_SESSION_ENCRYPTION_KEY:Buffer.alloc(32,3).toString('base64'),ASK_BILL_ALLOW_PUBLISHING:'true',ASK_BILL_PUBLISHER_AUTH:'passkey',
+      ASK_BILL_STORAGE_DRIVER:'postgres',ASK_BILL_EMBEDDED_TEXT_WORKER:'true',ASK_BILL_WORKER_POLL_MS:'200',PATH:process.env.PATH};
+    const app=await buildApplicationRuntime({env});
+    try{
+      const storage=createPostgresPrivateStorage({pool:runtime,publisherId});
+      const workflow=createPublisherWorkflow({pool:runtime,publisherId,storage});
+      const actor=action=>({publisherId,userId,role:'owner',action,freshMembershipVerified:true,mfaVerifiedByTrustedServer:true});
+      const bill=await workflow.createBill({actor:actor('upload'),title:'Embedded worker fixture',jurisdiction:'Test'});
+      const content=Buffer.from('# Section 1. Short title\n\nThis Act may be cited as the Embedded Worker Act.\n\n# Section 2. Purpose\n\nTo prove text extraction without external accounts.\n');
+      const sha256=createHash('sha256').update(content).digest('hex');
+      await storage.putQuarantine({publisherId,sha256,mime:'text/markdown',content});
+      const object=await storage.promoteQuarantine({publisherId,sha256,mime:'text/markdown'});
+      await workflow.recordUpload({actor:actor('upload'),billId:bill.id,object,language:'en'});
+      let versions=[];
+      for(let i=0;i<100&&!versions.length;i++){await new Promise(r=>setTimeout(r,200));versions=(await workflow.getBill({actor:actor('view'),billId:bill.id})).versions;}
+      assert.equal(versions.length,1,'embedded worker extracted the upload into a private version');
+      const version=await workflow.getVersion({actor:actor('view'),billId:bill.id,versionId:versions[0].id});
+      assert.match(version.canonicalText,/Embedded Worker Act/);assert.equal(version.publication,'private');
+    }finally{await app.close();}
   });
 }finally{await runtime?.end();await owner.end();}
