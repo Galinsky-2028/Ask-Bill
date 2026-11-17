@@ -8,6 +8,7 @@ import {createApplicationPool} from '../../packages/db/pool.mjs';
 import {createPublisherWorkflow} from '../../packages/db/publisher-workflow.mjs';
 import {createPublisherSourceExtractor,probePublisherSourceSandbox} from '../../packages/db/publisher-source-extraction.mjs';
 import {createS3PrivateStorage} from '../../packages/storage/s3.mjs';
+import {createPostgresPrivateStorage} from '../../packages/storage/postgres.mjs';
 import {createCongressClient} from '../../packages/content/connectors/congress/index.mjs';
 import {createPgJobStore} from '../../packages/jobs/pg-store.mjs';
 import {JobError} from '../../packages/jobs/index.mjs';
@@ -21,7 +22,7 @@ const integer=(env,key,fallback,min,max)=>{const n=env[key]===undefined?fallback
   if(!Number.isSafeInteger(n)||n<min||n>max)fail('WORKER_CONFIGURATION_INVALID');return n;};
 
 export async function createWorkerApplication({env=process.env,pool:providedPool,storage:providedStorage,
-  extractSource:providedExtractor,congressClient:providedCongress,deliver,onStatus}={}){
+  extractSource:providedExtractor,congressClient:providedCongress,deliver,onStatus,textOnly=false}={}){
   const config=readApplicationConfig(env,{component:'worker'});
   const workerId=env.ASK_BILL_WORKER_ID??randomUUID();
   if(!UUID.test(workerId)||deliver!==undefined&&typeof deliver!=='function'||onStatus!==undefined&&typeof onStatus!=='function')fail('WORKER_CONFIGURATION_INVALID');
@@ -36,7 +37,12 @@ export async function createWorkerApplication({env=process.env,pool:providedPool
   if(!Array.isArray(sandboxArgs)||sandboxArgs.length>30||sandboxArgs.some(x=>typeof x!=='string'||x.length>2000||x.includes('\0')))fail('WORKER_CONFIGURATION_INVALID');
   let containment='uncontained-test-only',extractSource=providedExtractor;
   if(providedExtractor!==undefined&&typeof providedExtractor!=='function')fail('WORKER_CONFIGURATION_INVALID');
-  if(!uncontained&&!(providedExtractor&&config.stage==='test')){
+  if(typeof textOnly!=='boolean')fail('WORKER_CONFIGURATION_INVALID');
+  if(textOnly&&!providedExtractor){
+    // Embedded in the web service: text/Markdown only, permission-model process boundary (see extractor).
+    containment='text-only-process-boundary';
+    extractSource=createPublisherSourceExtractor({textOnlyProcessBoundary:true,timeoutMs});
+  }else if(!uncontained&&!(providedExtractor&&config.stage==='test')){
     if(env.ASK_BILL_SOURCE_SANDBOX_VERIFIED!=='verified'||!env.ASK_BILL_SOURCE_SANDBOX_COMMAND)fail('PARSER_SANDBOX_REQUIRED');
     await probePublisherSourceSandbox({sandboxCommand:env.ASK_BILL_SOURCE_SANDBOX_COMMAND,sandboxArgs});
     containment='os-boundary-probe-passed';
@@ -44,9 +50,11 @@ export async function createWorkerApplication({env=process.env,pool:providedPool
   }else{
     extractSource??=createPublisherSourceExtractor({allowUncontainedForTests:true,timeoutMs});
   }
-  const storage=providedStorage??createS3PrivateStorage({...config.storage,publisherId:config.publisherId});
   const congressClient=config.officialImportsEnabled?(providedCongress??createCongressClient({apiKey:config.congressApiKey})):undefined;
   const pool=providedPool??await createApplicationPool({connectionString:config.databaseUrl,hosted:config.hosted,max:4});
+  const storage=providedStorage??(config.storage.driver==='postgres'
+    ?createPostgresPrivateStorage({pool,publisherId:config.publisherId,maxObjectBytes:config.storage.maxObjectBytes,maxTotalBytes:config.storage.maxTotalBytes})
+    :createS3PrivateStorage({...config.storage,publisherId:config.publisherId}));
   const ownedPool=!providedPool,abort=new AbortController(),drain=createWorkerDrainController();
   let running=false,inFlight=false,closed=false,loop=null,stopPromise=null,lastReap=0;
   const workflow=createPublisherWorkflow({pool,publisherId:config.publisherId,storage,congressClient,extractSource});

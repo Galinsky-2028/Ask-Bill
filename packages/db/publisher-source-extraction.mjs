@@ -39,8 +39,12 @@ export async function probePublisherSourceSandbox({sandboxCommand,sandboxArgs=[]
   return Object.freeze({schema:proof.schema,isolated:true,checks:Object.freeze({...proof.checks}),limits:Object.freeze({...proof.limits})});
 }
 
+/** Formats parsed by our own pure-JavaScript parsers (no native code, no binary container formats). */
+export const TEXT_ONLY_MIME = Object.freeze(['text/plain','text/markdown']);
+
 export function createPublisherSourceExtractor({sandboxCommand,sandboxArgs=[],sandboxVerified=false,
-  allowUncontainedForTests=false,timeoutMs=120000} = {}) {
+  allowUncontainedForTests=false,textOnlyProcessBoundary=false,timeoutMs=120000} = {}) {
+  if (textOnlyProcessBoundary === true) return createTextOnlyExtractor({timeoutMs});
   if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 1000 || timeoutMs > 300000 ||
       !Array.isArray(sandboxArgs) || sandboxArgs.length > 30 || sandboxArgs.some(x => typeof x !== 'string' || x.length > 2000 || x.includes('\0')) ||
       (sandboxCommand !== undefined && (typeof sandboxCommand !== 'string' || !isAbsolute(sandboxCommand)))) fail('EXTRACTOR_CONFIGURATION_INVALID');
@@ -48,16 +52,34 @@ export function createPublisherSourceExtractor({sandboxCommand,sandboxArgs=[],sa
   if (sandboxVerified === true && !sandboxCommand) fail('PARSER_SANDBOX_REQUIRED');
   if (allowUncontainedForTests && process.env.NODE_ENV === 'production') fail('PARSER_SANDBOX_REQUIRED');
   const entry = fileURLToPath(new URL('../../apps/worker/source-import/extract.mjs',import.meta.url));
+  return runExtractor({entry,timeoutMs,command:sandboxCommand ?? process.execPath,prefix:[...sandboxArgs,'--max-old-space-size=192'],mimes:MIME});
+}
+
+/**
+ * Text/Markdown only, for deployments without the OS sandbox (for example a free web plan).
+ * The parser runs in a separate Node process under the permission model: read-only access to
+ * application code, no file writes, no child processes, no worker threads or native addons,
+ * an empty environment, a 128 MB heap, an output cap and a hard timeout. PDF, DOCX and XML are
+ * refused here and still require the sandboxed worker.
+ */
+function createTextOnlyExtractor({timeoutMs}) {
+  const entry = fileURLToPath(new URL('../../apps/worker/source-import/extract.mjs',import.meta.url));
+  const root = fileURLToPath(new URL('../../',import.meta.url));
+  const reads = ['apps','packages','node_modules'].map(dir => '--allow-fs-read=' + join(root,dir));
+  return runExtractor({entry,timeoutMs,command:process.execPath,prefix:['--permission',...reads,'--max-old-space-size=128'],mimes:new Set(TEXT_ONLY_MIME)});
+}
+
+function runExtractor({entry,timeoutMs,command,prefix,mimes}) {
   return async function extractSource({bytes,mime,versionId,signal} = {}) {
-    if (!(bytes instanceof Uint8Array) || !MIME.has(mime) || !UUID.test(versionId ?? '')) fail('EXTRACTION_INPUT_INVALID');
+    if (!(bytes instanceof Uint8Array) || !UUID.test(versionId ?? '')) fail('EXTRACTION_INPUT_INVALID');
+    if (!mimes.has(mime)) fail(MIME.has(mime) ? 'FORMAT_REQUIRES_SANDBOXED_WORKER' : 'EXTRACTION_INPUT_INVALID');
     if (signal !== undefined && !(signal instanceof AbortSignal)) fail('EXTRACTION_INPUT_INVALID');
     if (signal?.aborted) fail('EXTRACTION_CANCELLED');
     scanQuarantinedBytes(bytes,mime);
     const workspace = await mkdtemp(join(tmpdir(),'ask-bill-extract-'));
     try {
       const output = await new Promise((resolve,reject) => {
-        const command = sandboxCommand ?? process.execPath;
-        const args = [...sandboxArgs,'--max-old-space-size=192',entry,mime,versionId];
+        const args = [...prefix,entry,mime,versionId];
         const child = spawn(command,args,{shell:false,cwd:workspace,windowsHide:true,
           stdio:['pipe','pipe','pipe'],env:{PATH:process.env.PATH ?? '/usr/bin:/bin',LANG:'C.UTF-8',TMPDIR:workspace}});
         let finished = false,size = 0,stderrSize = 0; const chunks = [];

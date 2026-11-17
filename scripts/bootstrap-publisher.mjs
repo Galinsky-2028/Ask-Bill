@@ -62,6 +62,14 @@ export async function bootstrapPublisher({pool,settings}={}){
     await client.query('GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA ask_bill TO '+roleSql);
     await client.query('REVOKE INSERT,UPDATE,DELETE ON ask_bill.publishers,ask_bill.publisher_memberships,ask_bill.publisher_auth_identities FROM '+roleSql);
     await client.query('REVOKE UPDATE,DELETE ON ask_bill.audit_events FROM '+roleSql);
+    // Passkey enrollment only via ask_bill.redeem_publisher_invite (owner-created invites).
+    if((await client.query("SELECT to_regclass('ask_bill.publisher_passkeys') IS NOT NULL AS ok")).rows[0].ok){
+      await client.query('REVOKE INSERT,UPDATE,DELETE ON ask_bill.publisher_enrollment_invites FROM '+roleSql);
+      await client.query('REVOKE INSERT,UPDATE,DELETE ON ask_bill.publisher_passkeys FROM '+roleSql);
+      await client.query('GRANT UPDATE(sign_count,last_used_at) ON ask_bill.publisher_passkeys TO '+roleSql);
+    }
+    if((await client.query("SELECT to_regclass('ask_bill.private_objects') IS NOT NULL AS ok")).rows[0].ok)
+      await client.query('REVOKE UPDATE ON ask_bill.private_objects FROM '+roleSql);
     await assertApplicationDatabaseRole(client,{roleName:role});
     await client.query('COMMIT');
     return {publisherId,userId,runtimeRole:role,identityEnrolled:identityHash!==null};

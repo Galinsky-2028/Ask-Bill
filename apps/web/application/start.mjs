@@ -11,6 +11,9 @@ import {createRecordingNormalizer,withBoundedRecordings} from '../../../packages
 import {createS3PrivateStorage} from '../../../packages/storage/s3.mjs';
 import {createOidcPublisherAuth} from '../../../packages/auth/oidc.mjs';
 import {createPostgresAuthStore} from '../../../packages/auth/pg-store.mjs';
+import {createPasskeyPublisherAuth} from '../../../packages/auth/passkey.mjs';
+import {createPostgresPasskeyStore} from '../../../packages/auth/passkey-store.mjs';
+import {createPostgresPrivateStorage} from '../../../packages/storage/postgres.mjs';
 import {createCongressClient} from '../../../packages/content/connectors/congress/index.mjs';
 import {createPublisherHandler} from '../admin/server/index.mjs';
 import {createAskBillApplication} from './server.mjs';
@@ -72,14 +75,26 @@ export async function buildApplicationRuntime({env=process.env,demo=false}={}){
     if(config.origin.startsWith('https://')){
       let auth,storage,repository;
       if(config.publishing){
-        storage=createS3PrivateStorage({...config.storage,publisherId:config.publisherId});
-        auth=createOidcPublisherAuth({...config.auth,store:createPostgresAuthStore({pool,publisherId:config.publisherId})});
+        storage=config.storage.driver==='postgres'
+          ?createPostgresPrivateStorage({pool,publisherId:config.publisherId,maxObjectBytes:config.storage.maxObjectBytes,maxTotalBytes:config.storage.maxTotalBytes})
+          :createS3PrivateStorage({...config.storage,publisherId:config.publisherId});
+        auth=config.auth.kind==='passkey'
+          ?createPasskeyPublisherAuth({...config.auth,store:createPostgresPasskeyStore({pool,publisherId:config.publisherId})})
+          :createOidcPublisherAuth({...config.auth,store:createPostgresAuthStore({pool,publisherId:config.publisherId})});
         const {createPublisherWorkflow}=await import('../../../packages/db/publisher-workflow.mjs');
         const congressClient=config.officialImportsEnabled?createCongressClient({apiKey:config.congressApiKey}):undefined;
         repository=createPublisherWorkflow({pool,publisherId:config.publisherId,storage,congressClient});
       }
       publisherHandler=createPublisherHandler({auth,storage,repository,expectedOrigin:config.origin,publisherId:config.publisherId,
-        officialImportsEnabled:config.officialImportsEnabled});
+        officialImportsEnabled:config.officialImportsEnabled,
+        // Without a sandboxed worker only text/Markdown originals can be extracted.
+        acceptedUploadMimes:config.embeddedTextWorker?['text/plain','text/markdown']:undefined});
+    }
+    let embeddedWorker=null;
+    if(config.embeddedTextWorker&&storage){
+      const {createWorkerApplication}=await import('../../worker/application.mjs');
+      embeddedWorker=await createWorkerApplication({env,pool,storage,textOnly:true});
+      embeddedWorker.run();
     }
     let closing=false;
     const readiness=async()=>{
@@ -96,6 +111,7 @@ export async function buildApplicationRuntime({env=process.env,demo=false}={}){
     cleanupTimer=setInterval(()=>{sessions.cleanup().catch(()=>{});},60000);cleanupTimer.unref();
     return {server,config,async close(){
       if(closing)return;closing=true;clearInterval(cleanupTimer);server.beginReaderDrain();
+      if(embeddedWorker)await embeddedWorker.stop().catch(()=>{});
       if(server.listening)await new Promise(resolve=>{
         const timeout=setTimeout(()=>{server.closeAllConnections();resolve();},25000);timeout.unref();
         server.close(()=>{clearTimeout(timeout);resolve();});server.closeIdleConnections();

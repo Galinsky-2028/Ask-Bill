@@ -32,12 +32,20 @@ services:
       - key: ASK_BILL_ALLOW_TRANSCRIPTION
         value: 'false'
       - key: ASK_BILL_ALLOW_PUBLISHING
-        value: 'false'
+        value: 'true'
       - key: ASK_BILL_ALLOW_OFFICIAL_IMPORTS
         value: 'false'
       # One-time maintenance values (set privately for the first deploy, then delete):
       # ASK_BILL_MIGRATION_DATABASE_URL, ASK_BILL_OWNER_USER_ID, ASK_BILL_OWNER_IDENTITY=deferred,
       # ASK_BILL_PUBLISHER_SLUG, ASK_BILL_PUBLISHER_NAME, ASK_BILL_RUNTIME_DB_ROLE, ASK_BILL_RUNTIME_DB_PASSWORD
+      # Zero-account publishing (see docs/ops/APPLICATION_RUNTIME.md): passkeys, PostgreSQL storage,
+      # text/Markdown-only embedded extraction. Enrolment needs the owner's invite digest.
+      - key: ASK_BILL_PUBLISHER_AUTH
+        value: passkey
+      - key: ASK_BILL_STORAGE_DRIVER
+        value: postgres
+      - key: ASK_BILL_EMBEDDED_TEXT_WORKER
+        value: 'true'
       - key: ASK_BILL_DAILY_REQUEST_LIMIT
         value: '1000'
       - key: ASK_BILL_SESSION_REQUEST_LIMIT

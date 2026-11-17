@@ -82,6 +82,7 @@ jobs:
           python tests/browser/test_navigation_worker_browser.py
           python tests/browser/test_interactive_reader_browser.py
           python tests/browser/test_publisher_browser.py
+          python tests/browser/test_passkey_browser.py
           python tests/browser/test_character_stage_browser.py
           python tests/browser/test_character_golden_poses.py
           python tests/replay/test_recorded_route_browser.py
